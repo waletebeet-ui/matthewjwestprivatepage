@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Matthew West Admin</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f141c;
+        --card: #18212d;
+        --card-soft: #202b39;
+        --line: rgb(255 255 255 / 13%);
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --gold: #f7c56b;
+        --coral: #f9735b;
+        --green: #52d28d;
+        --danger: #ff7a7a;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100dvh;
+        margin: 0;
+        color: var(--text);
+        background: var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      a {
+        font: inherit;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      p {
+        margin: 0;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.is-active {
+        display: block;
+      }
+
+      .login-shell {
+        min-height: 100dvh;
+        display: grid;
+        align-items: end;
+        padding: 22px 18px;
+        background:
+          linear-gradient(180deg, rgb(5 7 12 / 48%), rgb(5 7 12 / 88%)),
+          image-set(url("https://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20West%20Live%20at%20the%20Grand%20Ole%20Opry%20December%2013%2C%202012.jpg") 1x);
+        background-position: 56% center;
+        background-size: cover;
+      }
+
+      .auth-panel {
+        width: min(100%, 460px);
+        margin-inline: auto;
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        padding: 24px;
+        background: rgb(12 17 27 / 88%);
+        box-shadow: 0 26px 80px rgb(0 0 0 / 48%);
+        backdrop-filter: blur(24px) saturate(140%);
+      }
+
+      .eyebrow {
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: 0.75rem;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        font-size: clamp(1.7rem, 8.8vw, 2.5rem);
+        line-height: 1.02;
+      }
+
+      .step-head {
+        margin-bottom: 24px;
+      }
+
+      .step-head p:not(.eyebrow) {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      form,
+      .records,
+      .admin-record,
+      .receipt-preview {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 750;
+      }
+
+      input {
+        width: 100%;
+        min-height: 54px;
+        border: 1px solid rgb(255 255 255 / 18%);
+        border-radius: 16px;
+        padding: 0 16px;
+        color: var(--text);
+        background: rgb(255 255 255 / 10%);
+        outline: 2px solid transparent;
+      }
+
+      input:focus {
+        border-color: var(--gold);
+        outline-color: color-mix(in srgb, var(--gold) 34%, transparent);
+      }
+
+      .primary-button,
+      .secondary-button,
+      .adjust-button,
+      .zoom-button,
+      .accept-button,
+      .reject-button {
+        min-height: 48px;
+        border-radius: 14px;
+        padding: 0 16px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .primary-button {
+        border: 0;
+        color: #14100a;
+        background: linear-gradient(135deg, var(--gold), var(--coral));
+      }
+
+      .secondary-button {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgb(255 255 255 / 11%);
+      }
+
+      .support-tools {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .adjust-button,
+      .zoom-button {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgb(255 255 255 / 11%);
+      }
+
+      .message {
+        min-height: 21px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .message.is-error {
+        color: var(--danger);
+      }
+
+      .dashboard-top {
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: 14px;
+        align-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 16px 16px;
+        background: #151d28;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .artist-avatar {
+        width: 58px;
+        aspect-ratio: 1;
+        border-radius: 20px;
+        object-fit: cover;
+      }
+
+      .page {
+        display: grid;
+        gap: 14px;
+        padding: 16px 16px max(28px, env(safe-area-inset-bottom));
+      }
+
+      .hero-card,
+      .admin-record,
+      .receipt-preview {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--card);
+        padding: 16px;
+      }
+
+      .admin-record,
+      .receipt-preview {
+        border-radius: 16px;
+        background: var(--card-soft);
+      }
+
+      .hero-card p,
+      .admin-record p,
+      .receipt-preview p {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .receipt-preview img {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
+      .review-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .accept-button {
+        border: 0;
+        color: #102014;
+        background: var(--green);
+      }
+
+      .reject-button {
+        border: 0;
+        color: #210b0b;
+        background: var(--danger);
+      }
+
+      .status-pill {
+        width: fit-content;
+        border-radius: 999px;
+        padding: 5px 10px;
+        color: #14100a;
+        background: var(--gold);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .status-pill.accepted {
+        background: var(--green);
+      }
+
+      .status-pill.rejected {
+        background: var(--danger);
+      }
+
+      .image-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: none;
+        place-items: center;
+        padding: 18px;
+        background: rgb(0 0 0 / 88%);
+      }
+
+      .image-modal.is-active {
+        display: grid;
+      }
+
+      .image-modal img {
+        width: min(100%, 1100px);
+        max-height: 82dvh;
+        object-fit: contain;
+        border-radius: 14px;
+      }
+
+      .modal-actions {
+        display: grid;
+        gap: 10px;
+        width: min(100%, 1100px);
+      }
+
+      @media (min-width: 760px) {
+        .dashboard-top,
+        .page {
+          padding-inline: max(24px, 10vw);
+        }
+
+        .records {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="screen is-active" id="adminLoginScreen">
+      <main class="login-shell">
+        <div class="auth-panel">
+          <div class="step-head">
+            <p class="eyebrow">Admin only</p>
+            <h1>Matthew West admin</h1>
+            <p>Enter the admin code to view user records and review uploads.</p>
+          </div>
+          <form id="adminLoginForm">
+            <label>
+              Admin code
+              <input id="adminCode" type="password" placeholder="Admin code" autocomplete="off" required>
+            </label>
+            <button class="primary-button" type="submit">Open admin page</button>
+            <a class="secondary-button" href="index.html">Back to website</a>
+            <p class="message" id="adminLoginMessage"></p>
+          </form>
+        </div>
+      </main>
+    </section>
+
+    <section class="screen" id="adminScreen">
+      <header class="dashboard-top">
+        <img class="artist-avatar" src="https://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20West%20Live%20at%20the%20Grand%20Ole%20Opry%20December%2013%2C%202012.jpg" alt="Matthew West">
+        <div>
+          <p class="eyebrow">Admin only</p>
+          <h2>User records</h2>
+          <p>Private local records stored in this browser.</p>
+        </div>
+      </header>
+
+      <main class="page">
+        <article class="hero-card">
+          <p class="eyebrow">Admin</p>
+          <h3>User records</h3>
+          <p>This page shows accounts, supports, uploads, bitcoin receipts, delivery details, and claimed gifts stored in this browser.</p>
+        </article>
+        <div class="records" id="adminRecords"></div>
+        <button class="secondary-button" id="adminLogoutButton" type="button">Close admin page</button>
+      </main>
+    </section>
+
+    <div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="Uploaded image preview">
+      <div class="modal-actions">
+        <img id="modalImage" src="" alt="Zoomed upload">
+        <button class="secondary-button" id="closeModalButton" type="button">Close image</button>
+      </div>
+    </div>
+
+    <script>
+      const accountKey = "matthewWestPrivateAccounts";
+      const requiredAdminCode = "admin-matthew-west-2026";
+      const adminLoginScreen = document.querySelector("#adminLoginScreen");
+      const adminScreen = document.querySelector("#adminScreen");
+      const adminRecords = document.querySelector("#adminRecords");
+      const adminLoginMessage = document.querySelector("#adminLoginMessage");
+      const imageModal = document.querySelector("#imageModal");
+      const modalImage = document.querySelector("#modalImage");
+
+      function getAccounts() {
+        return JSON.parse(localStorage.getItem(accountKey) || "[]");
+      }
+
+      function saveAccounts(accounts) {
+        localStorage.setItem(accountKey, JSON.stringify(accounts));
+      }
+
+      function setMessage(element, text, type = "") {
+        element.textContent = text;
+        element.className = `message${type ? ` is-${type}` : ""}`;
+      }
+
+      function showAdmin() {
+        adminLoginScreen.classList.remove("is-active");
+        adminScreen.classList.add("is-active");
+        renderAdminRecords();
+      }
+
+      function reviewUpload(email, uploadId, status) {
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === email);
+        if (!account) return;
+
+        const upload = (account.pendingUploads || []).find((item) => item.id === uploadId);
+        if (!upload || upload.status !== "pending") return;
+
+        upload.status = status;
+        upload.reviewedAt = new Date().toLocaleString();
+
+        if (status === "accepted") {
+          account.supportCount = (account.supportCount || 0) + 1;
+          account.supportHistory = account.supportHistory || [];
+          account.supportHistory.push({
+            reason: upload.reason,
+            at: upload.reviewedAt,
+            approvedUpload: true,
+            fileName: upload.fileName,
+            receiptName: upload.receiptName,
+            fileType: upload.fileType,
+            receiptType: upload.receiptType,
+            fileData: upload.fileData
+          });
+        }
+
+        saveAccounts(accounts);
+        renderAdminRecords();
+      }
+
+      function adjustSupport(email, amount) {
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === email);
+        if (!account) return;
+
+        account.supportCount = Math.max(0, (account.supportCount || 0) + amount);
+        account.supportHistory = account.supportHistory || [];
+        account.supportHistory.push({
+          reason: amount > 0 ? "Admin added one support" : "Admin removed one support",
+          at: new Date().toLocaleString(),
+          adminAdjustment: amount
+        });
+        saveAccounts(accounts);
+        renderAdminRecords();
+      }
+
+      function openImage(src) {
+        modalImage.src = src;
+        imageModal.classList.add("is-active");
+      }
+
+      function closeImage() {
+        imageModal.classList.remove("is-active");
+        modalImage.src = "";
+      }
+
+      function renderAdminRecords() {
+        const accounts = getAccounts();
+        adminRecords.innerHTML = accounts.length ? "" : "<p class=\"message\">No users stored yet.</p>";
+
+        accounts.forEach((account) => {
+          const reviewedUploads = (account.supportHistory || []).filter((item) => item.fileName || item.receiptName);
+          const pendingUploads = account.pendingUploads || [];
+          const record = document.createElement("article");
+          record.className = "admin-record";
+          record.innerHTML = `
+            <h4>${account.name || "Unnamed user"}</h4>
+            <p>Email: ${account.email || "Not provided"}</p>
+            <p>Phone: ${account.phone || "Not provided"}</p>
+            <p>Address: ${account.address || "Not provided"}</p>
+            <p>Support count: ${account.supportCount || 0}</p>
+            <p>Votes: ${account.voteCount || 0}</p>
+            <p>Delivery fee: ${account.deliveryFeePaid ? `Paid${account.deliveryFeePaidAt ? ` at ${account.deliveryFeePaidAt}` : ""}` : "Not paid"}</p>
+            <p>Claimed gifts: ${(account.claimedGifts || []).join(", ") || "None"}</p>
+            <div class="support-tools">
+              <button class="adjust-button" type="button" data-adjust="-1" data-email="${account.email}">Reduce support</button>
+              <button class="adjust-button" type="button" data-adjust="1" data-email="${account.email}">Add support</button>
+            </div>
+          `;
+
+          pendingUploads.forEach((upload) => {
+            const preview = document.createElement("div");
+            preview.className = "receipt-preview";
+            const hasImage = upload.fileData && upload.fileData.startsWith("data:image");
+            preview.innerHTML = `
+              <p>${upload.reason}</p>
+              <span class="status-pill ${upload.status}">${upload.status === "pending" ? "Pending review - not counted" : upload.status}</span>
+              <p>${upload.fileName || upload.receiptName || "Uploaded file"}</p>
+              ${hasImage ? `<img src="${upload.fileData}" alt="Pending upload">` : ""}
+              ${hasImage ? `<button class="zoom-button" type="button" data-zoom="${upload.id}">Zoom image</button>` : ""}
+              ${upload.status === "pending" ? `
+                <div class="review-actions">
+                  <button class="accept-button" type="button" data-review="accepted" data-email="${account.email}" data-upload-id="${upload.id}">Accept</button>
+                  <button class="reject-button" type="button" data-review="rejected" data-email="${account.email}" data-upload-id="${upload.id}">Reject</button>
+                </div>
+              ` : `<p>Reviewed: ${upload.reviewedAt || "Not reviewed"}</p>`}
+            `;
+            record.append(preview);
+          });
+
+          reviewedUploads.forEach((upload) => {
+            const preview = document.createElement("div");
+            preview.className = "receipt-preview";
+            const hasImage = upload.fileData && upload.fileData.startsWith("data:image");
+            preview.innerHTML = `
+              <p>${upload.reason}</p>
+              <span class="status-pill accepted">accepted and counted as support</span>
+              <p>${upload.fileName || upload.receiptName || "Uploaded file"}</p>
+              ${hasImage ? `<img src="${upload.fileData}" alt="Uploaded receipt">` : ""}
+              ${hasImage ? `<button class="zoom-button" type="button" data-reviewed-zoom="${upload.at}-${upload.fileName || upload.receiptName || ""}">Zoom image</button>` : ""}
+            `;
+            if (hasImage) {
+              preview.querySelector(".zoom-button").addEventListener("click", () => openImage(upload.fileData));
+            }
+            record.append(preview);
+          });
+
+          adminRecords.append(record);
+        });
+
+        adminRecords.querySelectorAll("[data-review]").forEach((button) => {
+          button.addEventListener("click", () => {
+            reviewUpload(button.dataset.email, button.dataset.uploadId, button.dataset.review);
+          });
+        });
+
+        adminRecords.querySelectorAll("[data-adjust]").forEach((button) => {
+          button.addEventListener("click", () => {
+            adjustSupport(button.dataset.email, Number(button.dataset.adjust));
+          });
+        });
+
+        adminRecords.querySelectorAll("[data-zoom]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const uploadId = button.dataset.zoom;
+            const account = getAccounts().find((item) => (item.pendingUploads || []).some((upload) => upload.id === uploadId));
+            const upload = account?.pendingUploads.find((item) => item.id === uploadId);
+            if (upload?.fileData) openImage(upload.fileData);
+          });
+        });
+      }
+
+      document.querySelector("#adminLoginForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const code = document.querySelector("#adminCode").value.trim();
+
+        if (code !== requiredAdminCode) {
+          setMessage(adminLoginMessage, "Admin code is incorrect.", "error");
+          return;
+        }
+
+        document.querySelector("#adminLoginForm").reset();
+        showAdmin();
+      });
+
+      document.querySelector("#adminLogoutButton").addEventListener("click", () => {
+        adminScreen.classList.remove("is-active");
+        adminLoginScreen.classList.add("is-active");
+      });
+
+      document.querySelector("#closeModalButton").addEventListener("click", closeImage);
+      imageModal.addEventListener("click", (event) => {
+        if (event.target === imageModal) closeImage();
+      });
+    </script>
+  </body>
+</html>
