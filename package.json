@@ -1,9 +1,14 @@
 {
+  "name": "matthew-west-backend",
+  "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "latest",
-    "multer": "latest"
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.7.0"
   }
 }
