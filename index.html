@@ -1162,12 +1162,11 @@
 
       /*
         BACKEND SETUP SECTION
-        Run the included server.js file. The Telegram bot token and chat ID are now stored safely in server.js.
-        If you open this HTML directly, it will call http://localhost:3000.
-        If you open it through the backend, it will call the same domain automatically.
+        This frontend is connected to your Railway backend.
+        Telegram bot token and chat ID must stay only in Railway backend variables, not inside this frontend file.
       */
       const backendConfig = {
-        apiBase: window.location.protocol.startsWith("http") ? "" : "http://localhost:3000"
+        apiBase: "https://bac-production-dd1a.up.railway.app"
       };
 
       const screens = document.querySelectorAll(".screen");
@@ -1288,11 +1287,13 @@
           body: formData
         });
 
-        if (!response.ok) {
-          throw new Error("Upload could not be sent to review.");
+        const result = await response.json().catch(() => null);
+
+        if (!response.ok || !result?.ok) {
+          throw new Error(result?.message || "Upload could not be sent to review.");
         }
 
-        return response.json();
+        return result;
       }
 
       async function registerAccountToBackend(account) {
@@ -1318,13 +1319,19 @@
         try {
           const response = await fetch(`${backendConfig.apiBase}/api/account/${encodeURIComponent(currentAccountEmail)}`);
           if (!response.ok) return;
-          const backendAccount = await response.json();
+
+          const result = await response.json();
+          const backendAccount = result.account || result;
+          if (!backendAccount) return;
+
           const accounts = getAccounts();
           const account = accounts.find((item) => item.email === currentAccountEmail);
           if (!account) return;
 
           const backendSupport = Number(backendAccount.supportCount || 0);
-          if (backendSupport > Number(account.supportCount || 0)) {
+          const localSupport = Number(account.supportCount || 0);
+
+          if (backendSupport > localSupport) {
             account.supportCount = backendSupport;
             account.supportHistory = account.supportHistory || [];
             account.supportHistory.push({
