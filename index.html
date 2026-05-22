@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Matthew West Private Page</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08090d;
+        --dash: #0f141c;
+        --surface: rgb(12 17 27 / 84%);
+        --card: #18212d;
+        --card-soft: #202b39;
+        --line: rgb(255 255 255 / 13%);
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --gold: #f7c56b;
+        --coral: #f9735b;
+        --green: #52d28d;
+        --danger: #ff7a7a;
+        --shadow: 0 26px 80px rgb(0 0 0 / 48%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        background: var(--bg);
+        -webkit-text-size-adjust: 100%;
+      }
+
+      img,
+      picture,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+
+      body {
+        min-height: 100dvh;
+        margin: 0;
+        overflow-x: hidden;
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background:
+          linear-gradient(180deg, rgb(5 7 12 / 48%), rgb(5 7 12 / 88%)),
+          image-set(url("https://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20West%20Live%20at%20the%20Grand%20Ole%20Opry%20December%2013%2C%202012.jpg") 1x);
+        background-attachment: fixed;
+        background-position: 56% center;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      body.dashboard-mode {
+        background: var(--dash);
+      }
+
+      button,
+      input,
+      select,
+      textarea,
+      a {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      p {
+        margin: 0;
+        letter-spacing: 0;
+      }
+
+      .app-shell {
+        min-height: 100dvh;
+        display: grid;
+        align-items: end;
+        padding: max(22px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+      }
+
+      body.dashboard-mode .app-shell {
+        display: block;
+        padding: 0;
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.is-active {
+        display: block;
+      }
+
+      .auth-screen {
+        width: min(100%, 460px);
+        margin-inline: auto;
+      }
+
+      .auth-panel {
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        padding: 24px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(24px) saturate(140%);
+      }
+
+      .eyebrow {
+        margin-bottom: 8px;
+        color: var(--gold);
+        font-size: 0.75rem;
+        font-weight: 850;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        font-size: clamp(1.7rem, 8.8vw, 2.5rem);
+        line-height: 1.02;
+      }
+
+      .brand,
+      .step-head {
+        margin-bottom: 24px;
+      }
+
+      .step-head p:not(.eyebrow) {
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .auth-switch {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tab {
+        position: relative;
+        min-height: 44px;
+        border: 0;
+        color: var(--muted);
+        background: transparent;
+        font-weight: 850;
+        cursor: pointer;
+      }
+
+      .tab.is-active {
+        color: var(--text);
+      }
+
+      .tab.is-active::after {
+        position: absolute;
+        right: 0;
+        bottom: -1px;
+        left: 0;
+        height: 3px;
+        border-radius: 999px 999px 0 0;
+        background: linear-gradient(135deg, var(--gold), var(--coral));
+        content: "";
+      }
+
+      .form {
+        display: none;
+        gap: 15px;
+      }
+
+      .form.is-active,
+      .step-form {
+        display: grid;
+        gap: 15px;
+      }
+
+      .form-title {
+        font-size: 1.15rem;
+      }
+
+      label,
+      fieldset {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        border: 0;
+        padding: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+        font-weight: 750;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 54px;
+        border: 1px solid rgb(255 255 255 / 18%);
+        border-radius: 16px;
+        padding: 0 16px;
+        color: var(--text);
+        background: rgb(255 255 255 / 10%);
+        outline: 2px solid transparent;
+      }
+
+      textarea {
+        min-height: 96px;
+        padding-block: 14px;
+        resize: vertical;
+      }
+
+      select {
+        appearance: none;
+        background-image:
+          linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+          linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+        background-position: calc(100% - 19px) 23px, calc(100% - 13px) 23px;
+        background-repeat: no-repeat;
+        background-size: 6px 6px, 6px 6px;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--gold);
+        outline-color: color-mix(in srgb, var(--gold) 34%, transparent);
+        background: rgb(15 23 42 / 84%);
+      }
+
+      .primary-button,
+      .secondary-button,
+      .nav-button,
+      .claim-button,
+      .link-button,
+      .support-button {
+        display: inline-grid;
+        min-height: 54px;
+        place-items: center;
+        border-radius: 16px;
+        padding: 0 16px;
+        font-weight: 900;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .primary-button,
+      .link-button.is-hot,
+      .support-button {
+        border: 0;
+        color: #14100a;
+        background: linear-gradient(135deg, var(--gold), var(--coral));
+        box-shadow: 0 16px 34px rgb(249 115 91 / 28%);
+      }
+
+      .secondary-button,
+      .nav-button,
+      .claim-button,
+      .link-button {
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgb(255 255 255 / 11%);
+      }
+
+      .message {
+        min-height: 21px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .message.is-error {
+        color: var(--danger);
+      }
+
+      .message.is-success {
+        color: var(--green);
+      }
+
+      .support-meter {
+        display: grid;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 14px;
+        background: #111923;
+      }
+
+      .support-meter strong {
+        color: var(--gold);
+        font-size: 1.8rem;
+      }
+
+      .support-meter p {
+        color: var(--muted);
+        line-height: 1.4;
+      }
+
+      .access-loader {
+        display: none;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        color: var(--gold);
+        background: rgb(0 0 0 / 22%);
+        white-space: nowrap;
+      }
+
+      .access-loader.is-active {
+        display: block;
+      }
+
+      .access-loader span {
+        display: inline-block;
+        animation: codeScroll 1.8s linear infinite;
+      }
+
+      @keyframes codeScroll {
+        from {
+          transform: translateX(100%);
+        }
+
+        to {
+          transform: translateX(-100%);
+        }
+      }
+
+      .success-panel {
+        display: grid;
+        gap: 18px;
+        text-align: center;
+      }
+
+      .success-mark {
+        display: grid;
+        width: 76px;
+        aspect-ratio: 1;
+        place-items: center;
+        margin-inline: auto;
+        border-radius: 50%;
+        color: #102014;
+        background: var(--green);
+        font-size: 2rem;
+        font-weight: 950;
+      }
+
+      .dashboard {
+        min-height: 100dvh;
+        background: var(--dash);
+      }
+
+      .dashboard-top {
+        display: grid;
+        grid-template-columns: 58px 1fr;
+        gap: 14px;
+        align-items: center;
+        padding: max(18px, env(safe-area-inset-top)) 16px 16px;
+        background: #151d28;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .artist-avatar {
+        width: clamp(50px, 13vw, 64px);
+        aspect-ratio: 1;
+        border-radius: 20px;
+        object-fit: cover;
+        object-position: center;
+        background: var(--card-soft);
+      }
+
+      .dashboard-top h2 {
+        font-size: 1.32rem;
+      }
+
+      .dashboard-top p {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .portal-nav {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 10px 12px;
+        background: #101722;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav-button {
+        min-height: 42px;
+        border-radius: 14px;
+        font-size: 0.76rem;
+      }
+
+      .nav-button.is-active {
+        color: #14100a;
+        background: var(--gold);
+      }
+
+      .page {
+        display: none;
+        padding: 16px 16px max(28px, env(safe-area-inset-bottom));
+      }
+
+      .page.is-active {
+        display: grid;
+        gap: 14px;
+      }
+
+      .hero-card,
+      .content-card,
+      .stat-card,
+      .song-card,
+      .gift-card,
+      .support-card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: var(--card);
+      }
+
+      .hero-card,
+      .content-card,
+      .support-card {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .hero-card p,
+      .content-card p,
+      .song-card p,
+      .gift-card p,
+      .support-card p,
+      .fan-list,
+      .profile-list {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        display: grid;
+        gap: 8px;
+        min-height: 108px;
+        padding: 14px;
+      }
+
+      .stat-card strong {
+        color: var(--gold);
+        font-size: 1.45rem;
+      }
+
+      .song-list,
+      .gift-grid,
+      .support-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .gift-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+      }
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      .vote-locked {
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      .review-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .accept-button,
+      .reject-button {
+        min-height: 42px;
+        border: 0;
+        border-radius: 12px;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
+      .accept-button {
+        color: #102014;
+        background: var(--green);
+      }
+
+      .reject-button {
+        color: #210b0b;
+        background: var(--danger);
+      }
+
+      .song-card,
+      .gift-card {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+      }
+
+      .gift-card {
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .gift-card img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        object-position: center;
+        background: var(--card-soft);
+      }
+
+      .gift-body {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+      }
+
+      .claim-button.is-claimed {
+        color: #102014;
+        background: var(--green);
+        cursor: default;
+      }
+
+      .claim-button.is-locked {
+        color: var(--muted);
+        background: rgb(255 255 255 / 6%);
+        cursor: not-allowed;
+      }
+
+      .fan-list,
+      .profile-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .profile-list {
+        padding-left: 0;
+        list-style: none;
+      }
+
+      .profile-list strong {
+        color: var(--text);
+      }
+
+      @media (max-width: 380px) {
+        .app-shell {
+          padding-inline: 12px;
+        }
+
+        .auth-panel {
+          border-radius: 22px;
+          padding: 18px;
+        }
+
+        .dashboard-top {
+          grid-template-columns: 50px 1fr;
+          gap: 10px;
+        }
+
+        .portal-nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .action-row,
+        .stat-grid,
+        .review-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (hover: none) and (pointer: coarse) {
+        body {
+          background-attachment: scroll;
+        }
+      }
+
+      @media (min-width: 760px) {
+        .app-shell {
+          align-items: center;
+          justify-items: end;
+          padding: 40px 8vw;
+        }
+
+        body.dashboard-mode .app-shell {
+          padding: 0;
+        }
+
+        .dashboard-top,
+        .page {
+          padding-inline: max(24px, 10vw);
+        }
+
+        .support-grid,
+        .song-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1100px) {
+        .dashboard-top,
+        .page {
+          padding-inline: max(32px, 13vw);
+        }
+
+        .gift-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="screen auth-screen is-active" id="authScreen">
+        <div class="auth-panel" aria-live="polite">
+          <div class="brand">
+            <p class="eyebrow">Matthew J West</p>
+            <h1>Welcome to Matthew West private page</h1>
+          </div>
+
+          <div class="auth-switch" role="tablist" aria-label="Account options">
+            <button class="tab is-active" id="loginTab" type="button" role="tab" aria-selected="true" aria-controls="loginPanel">Login</button>
+            <button class="tab" id="createTab" type="button" role="tab" aria-selected="false" aria-controls="createPanel">Create account</button>
+          </div>
+
+          <form class="form is-active" id="loginPanel" autocomplete="on">
+            <h2 class="form-title">Sign in</h2>
+            <label>
+              Email
+              <input id="loginEmail" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </label>
+            <label>
+              Password
+              <input id="loginPassword" type="password" name="password" placeholder="Enter password" autocomplete="current-password" minlength="8" required>
+            </label>
+            <button class="primary-button" type="submit">Enter private page</button>
+            <p class="message" id="loginMessage"></p>
+          </form>
+
+          <form class="form" id="createPanel" autocomplete="on" hidden>
+            <h2 class="form-title">Create your account</h2>
+            <label>
+              Full name
+              <input id="signupName" type="text" name="name" placeholder="Your full name" autocomplete="name" required>
+            </label>
+            <label>
+              Email
+              <input id="signupEmail" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </label>
+            <label>
+              Password
+              <input id="signupPassword" type="password" name="password" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+            </label>
+            <button class="primary-button" type="submit">Continue</button>
+            <p class="message" id="signupMessage"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen auth-screen" id="accessScreen">
+        <div class="auth-panel">
+          <div class="step-head">
+            <p class="eyebrow">Access key</p>
+            <h2>Enter private access code</h2>
+            <p>The access code will be checked before the next registration step appears.</p>
+          </div>
+          <form class="step-form" id="accessForm">
+            <label>
+              Access code
+              <input id="accessCode" type="text" placeholder="Enter access code" autocomplete="off" required>
+            </label>
+            <div class="access-loader" id="accessLoader"><span>Checking access code... gqhwadrs6712st2tdctyt1wyghqe2 ...</span></div>
+            <button class="primary-button" type="submit">Verify access</button>
+            <p class="message" id="accessMessage"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen auth-screen" id="fanScreen">
+        <div class="auth-panel">
+          <div class="step-head">
+            <p class="eyebrow">Fan details</p>
+            <h2>Tell us about your connection</h2>
+            <p>Answer these two questions before your private page opens.</p>
+          </div>
+          <form class="step-form" id="fanForm">
+            <fieldset>
+              <legend>Who are you to Matthew West?</legend>
+              <select id="relationship" required>
+                <option value="">Choose one</option>
+                <option>Family</option>
+                <option>Friend</option>
+                <option>Huge fan</option>
+              </select>
+            </fieldset>
+            <label>
+              How long have you been a fan?
+              <input id="fanLength" type="text" placeholder="Example: 5 years" required>
+            </label>
+            <button class="primary-button" type="submit">Continue</button>
+            <p class="message" id="fanMessage"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen auth-screen" id="deliveryScreen">
+        <div class="auth-panel">
+          <div class="step-head">
+            <p class="eyebrow">Delivery details</p>
+            <h2>Where should gifts be sent?</h2>
+            <p>Enter a phone number and address before opening the dashboard.</p>
+          </div>
+          <form class="step-form" id="deliveryForm">
+            <label>
+              Phone number
+              <input id="phoneNumber" type="tel" inputmode="tel" placeholder="Phone number" autocomplete="tel" required>
+            </label>
+            <label>
+              Delivery address
+              <textarea id="deliveryAddress" placeholder="Street, city, state, ZIP" autocomplete="street-address" required></textarea>
+            </label>
+            <button class="primary-button" type="submit">Finish</button>
+            <p class="message" id="deliveryMessage"></p>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen auth-screen" id="successScreen">
+        <div class="auth-panel success-panel">
+          <div class="success-mark">✓</div>
+          <div>
+            <p class="eyebrow">Login successful</p>
+            <h2>Access granted</h2>
+          </div>
+          <p class="message is-success">Your private Matthew West dashboard is opening.</p>
+        </div>
+      </section>
+
+      <section class="screen" id="dashboardScreen">
+        <div class="dashboard">
+          <header class="dashboard-top">
+            <img class="artist-avatar" loading="eager" decoding="async" src="https://commons.wikimedia.org/wiki/Special:FilePath/Matthew%20West%20Live%20at%20the%20Grand%20Ole%20Opry%20December%2013%2C%202012.jpg" alt="Matthew West">
+            <div>
+              <p class="eyebrow">Private fan portal</p>
+              <h2 id="welcomeName">Welcome</h2>
+              <p id="fanSummary">Your Matthew West dashboard is ready.</p>
+            </div>
+          </header>
+
+          <nav class="portal-nav" aria-label="Private page navigation">
+            <button class="nav-button is-active" type="button" data-page="dashboardPage">Home</button>
+            <button class="nav-button" type="button" data-page="giftsPage">Gifts</button>
+            <button class="nav-button" type="button" data-page="supportPage">Support</button>
+            <button class="nav-button" type="button" data-page="profilePage">Profile</button>
+          </nav>
+
+          <section class="page is-active" id="dashboardPage">
+            <article class="hero-card">
+              <p class="eyebrow">Dashboard</p>
+              <h3>Matthew West fan center</h3>
+              <p>Explore music highlights, vote in the K-LOVE Fan Awards, claim gifts, and keep your private fan profile updated.</p>
+              <div class="action-row">
+                <button class="link-button is-hot" type="button" data-page-jump="supportPage">Vote now</button>
+                <button class="secondary-button" type="button" data-page-jump="giftsPage">Claim gifts</button>
+              </div>
+            </article>
+
+            <section class="stat-grid" aria-label="Matthew West highlights">
+              <article class="stat-card">
+                <strong>38</strong>
+                <span>No. 1 songs as an artist and songwriter</span>
+              </article>
+              <article class="stat-card">
+                <strong>5x</strong>
+                <span>GRAMMY nominee</span>
+              </article>
+              <article class="stat-card">
+                <strong>Gold</strong>
+                <span>RIAA Gold and Platinum certifications</span>
+              </article>
+              <article class="stat-card">
+                <strong>Awards</strong>
+                <span>AMA, Billboard, K-LOVE, and GMA Dove honors</span>
+              </article>
+            </section>
+
+            <section class="content-card">
+              <h3>About Matthew West</h3>
+              <p>Matthew West is a Christian music artist, songwriter, author, and podcast host known for songs built around faith, personal stories, hope, and encouragement.</p>
+            </section>
+
+            <section class="content-card">
+              <h3>Music To Know</h3>
+              <div class="song-list">
+                <article class="song-card">
+                  <h4>Don't Stop Praying</h4>
+                  <p>A major recent song connected to his newest era.</p>
+                </article>
+                <article class="song-card">
+                  <h4>Truth Be Told</h4>
+                  <p>A widely known song about honesty, grace, and faith.</p>
+                </article>
+                <article class="song-card">
+                  <h4>The Story of Your Life</h4>
+                  <p>A fan-recognized project shaped around real stories and testimony.</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="content-card">
+              <h3>Official links</h3>
+              <div class="support-grid">
+                <article class="support-card">
+                  <h4>Visit official site</h4>
+                  <p>Check music, videos, books, podcast, and tour updates.</p>
+                  <a class="link-button" href="https://www.matthewwest.com/">Official site</a>
+                </article>
+                <article class="support-card">
+                  <h4>Listen to music</h4>
+                  <p>Explore Matthew West songs and albums.</p>
+                  <a class="link-button" href="https://www.matthewwest.com/music">Music page</a>
+                </article>
+                <article class="support-card">
+                  <h4>Watch videos</h4>
+                  <p>Watch official videos and featured content.</p>
+                  <a class="link-button" href="https://www.matthewwest.com/videos">Videos</a>
+                </article>
+              </div>
+            </section>
+          </section>
+
+          <section class="page" id="giftsPage">
+            <article class="hero-card">
+              <p class="eyebrow">Gift claim page</p>
+              <h3>Claim Matthew West fan gifts</h3>
+              <p>Support Matthew West music at least 10 times to unlock gift claims. Your phone and address are used for delivery details.</p>
+              <div class="support-meter">
+                <strong id="giftSupportCount">0</strong>
+                <p id="giftUnlockText">Support 10 times to unlock gift claims.</p>
+              </div>
+              <button class="support-button is-hidden" id="deliveryFeeButton" type="button">Pay delivery fee</button>
+            </article>
+
+            <div class="gift-grid">
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="c.png" alt="T-shirt">
+                <div class="gift-body">
+                  <h4>Don't Stop Praying T-shirt</h4>
+                  <p>Fan shirt inspired by the song.</p>
+                  <button class="claim-button" type="button" data-gift="Don't Stop Praying T-shirt">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="f.png" alt="Package box">
+                <div class="gift-body">
+                  <h4>Matthew West Package Box</h4>
+                  <p>A special fan package box for keepsakes.</p>
+                  <button class="claim-button" type="button" data-gift="Matthew West Package Box">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="a.png" alt="Membership card">
+                <div class="gift-body">
+                  <h4>Membership Card</h4>
+                  <p>Private page membership card for fans.</p>
+                  <button class="claim-button" type="button" data-gift="Membership Card">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="b.png" alt="Signed photo pass">
+                <div class="gift-body">
+                  <h4>Signed Photo Pass</h4>
+                  <p>A collectible photo-pass style fan item.</p>
+                  <button class="claim-button" type="button" data-gift="Signed Photo Pass">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="e.png" alt="Sticker pack">
+                <div class="gift-body">
+                  <h4>Sticker Pack</h4>
+                  <p>Matthew West themed stickers for fans.</p>
+                  <button class="claim-button" type="button" data-gift="Sticker Pack">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80" alt="VIP fan badge">
+                <div class="gift-body">
+                  <h4>VIP Fan Badge</h4>
+                  <p>A digital badge for your private dashboard.</p>
+                  <button class="claim-button" type="button" data-gift="VIP Fan Badge">Claim gift</button>
+                </div>
+              </article>
+
+              <article class="gift-card">
+                <img loading="lazy" decoding="async" src="d.png" alt="Jewelry">
+                <div class="gift-body">
+                  <h4>Matthew West Jewelry Set</h4>
+                  <p>A special fan jewelry gift for eligible supporters.</p>
+                  <button class="claim-button" type="button" data-gift="Matthew West Jewelry Set">Claim gift</button>
+                </div>
+              </article>
+            </div>
+
+            <p class="message" id="claimMessage"></p>
+          </section>
+
+          <section class="page" id="supportPage">
+            <article class="hero-card">
+              <p class="eyebrow">Support</p>
+              <h3>Support Matthew West</h3>
+              <p>Use these actions to support his music. Every support action is saved to your profile, and 10 support actions unlock gift claims.</p>
+              <div class="support-meter">
+                <strong id="supportCount">0</strong>
+                <p id="supportStatus">You have supported Matthew West music 0 times.</p>
+                <p id="latestSupportTime">Latest support: none yet.</p>
+                <p id="voteStatus">Vote count: 0</p>
+              </div>
+            </article>
+            <div class="support-grid">
+              <article class="support-card">
+                <h4>1. Vote</h4>
+                <p>Open the voting page, then confirm here after voting for Matthew West. This page cannot verify the external vote automatically.</p>
+                <a class="support-button" id="voteLink" href="https://www.klovefanawards.com/vote?utm_source=ig&utm_medium=social&utm_content=link_in_bio">Vote now</a>
+                <button class="secondary-button" id="confirmVoteButton" type="button">I voted for Matthew West</button>
+              </article>
+              <article class="support-card">
+                <h4>Support now</h4>
+                <p>Choose one of the payment/support options below: vote, gift card, or bitcoin.</p>
+                <button class="support-button" type="button" data-page-jump="supportPage">Show payment options</button>
+              </article>
+              <article class="support-card">
+                <h4>2. Support with gift card</h4>
+                <p>Upload or take a picture of a gift card. Each successful upload counts as one support.</p>
+                <label>
+                  Gift card upload
+                  <input id="giftCardUpload" type="file" accept="image/*,.pdf" capture="environment">
+                </label>
+                <button class="support-button" id="giftCardSupportButton" type="button">Submit gift card support</button>
+                <p class="message" id="giftCardMessage"></p>
+              </article>
+              <article class="support-card">
+                <h4>3. Pay Matthew West music with bitcoin</h4>
+                <p>Copy the bitcoin wallet address, then upload or take a picture of the receipt.</p>
+                <label>
+                  Bitcoin wallet address
+                  <input id="bitcoinAddress" type="text" value="bc1qmatthewwestmusic7support0000000000000000000" readonly>
+                </label>
+                <button class="secondary-button" id="copyBitcoinButton" type="button">Copy address</button>
+                <label>
+                  Crypto transaction ID
+                  <input id="cryptoTransaction" type="text" placeholder="Transaction ID or wallet note">
+                </label>
+                <label>
+                  Bitcoin receipt upload
+                  <input id="bitcoinReceiptUpload" type="file" accept="image/*,.pdf" capture="environment">
+                </label>
+                <button class="support-button" id="cryptoSupportButton" type="button">Record crypto support</button>
+                <p class="message" id="cryptoMessage"></p>
+              </article>
+              <article class="support-card">
+                <h4>Visit official site</h4>
+                <p>Check music, videos, books, podcast, and tour updates.</p>
+                <a class="link-button" href="https://www.matthewwest.com/">Official site</a>
+              </article>
+              <article class="support-card">
+                <h4>Listen to music</h4>
+                <p>Explore Matthew West songs and albums.</p>
+                <a class="link-button" href="https://www.matthewwest.com/music">Music page</a>
+              </article>
+              <article class="support-card">
+                <h4>Watch videos</h4>
+                <p>Watch official videos and featured content.</p>
+                <a class="link-button" href="https://www.matthewwest.com/videos">Videos</a>
+              </article>
+            </div>
+          </section>
+
+          <section class="page" id="profilePage">
+            <article class="content-card">
+              <h3>Your fan profile</h3>
+              <ul class="profile-list">
+                <li><strong>Relationship:</strong> <span id="relationshipLine"></span></li>
+                <li><strong>Fan length:</strong> <span id="fanLengthLine"></span></li>
+                <li><strong>Phone:</strong> <span id="phoneLine"></span></li>
+                <li><strong>Delivery address:</strong> <span id="addressLine"></span></li>
+                <li><strong>Support count:</strong> <span id="profileSupportCount"></span></li>
+                <li><strong>Latest support:</strong> <span id="profileLatestSupport"></span></li>
+                <li><strong>Votes:</strong> <span id="profileVoteCount"></span></li>
+                <li><strong>Claimed gifts:</strong> <span id="claimedGiftsLine"></span></li>
+              </ul>
+            </article>
+
+            <article class="content-card">
+              <h3>Fan corner</h3>
+              <ul class="fan-list">
+                <li>Listen to a Matthew West song today.</li>
+                <li>Share your favorite lyric with another fan.</li>
+                <li>Vote in the K-LOVE Fan Awards.</li>
+                <li>Check official music, videos, and tour updates.</li>
+              </ul>
+            </article>
+
+            <button class="secondary-button" id="logoutButton" type="button">Log out</button>
+          </section>
+
+        </div>
+      </section>
+
+    <script>
+      const accountKey = "matthewWestPrivateAccounts";
+      const sessionKey = "matthewWestCurrentSession";
+      const requiredAccessCode = "gqhwadrs6712st2tdctyt1wyghqe2";
+
+      const screens = document.querySelectorAll(".screen");
+      const authScreen = document.querySelector("#authScreen");
+      const dashboardScreen = document.querySelector("#dashboardScreen");
+      const loginTab = document.querySelector("#loginTab");
+      const createTab = document.querySelector("#createTab");
+      const loginPanel = document.querySelector("#loginPanel");
+      const createPanel = document.querySelector("#createPanel");
+      const loginMessage = document.querySelector("#loginMessage");
+      const signupMessage = document.querySelector("#signupMessage");
+      const accessMessage = document.querySelector("#accessMessage");
+      const fanMessage = document.querySelector("#fanMessage");
+      const deliveryMessage = document.querySelector("#deliveryMessage");
+      const claimMessage = document.querySelector("#claimMessage");
+      const accessLoader = document.querySelector("#accessLoader");
+      const welcomeName = document.querySelector("#welcomeName");
+      const fanSummary = document.querySelector("#fanSummary");
+      const relationshipLine = document.querySelector("#relationshipLine");
+      const fanLengthLine = document.querySelector("#fanLengthLine");
+      const phoneLine = document.querySelector("#phoneLine");
+      const addressLine = document.querySelector("#addressLine");
+      const claimedGiftsLine = document.querySelector("#claimedGiftsLine");
+      const supportCount = document.querySelector("#supportCount");
+      const supportStatus = document.querySelector("#supportStatus");
+      const latestSupportTime = document.querySelector("#latestSupportTime");
+      const voteStatus = document.querySelector("#voteStatus");
+      const giftSupportCount = document.querySelector("#giftSupportCount");
+      const giftUnlockText = document.querySelector("#giftUnlockText");
+      const profileSupportCount = document.querySelector("#profileSupportCount");
+      const profileLatestSupport = document.querySelector("#profileLatestSupport");
+      const profileVoteCount = document.querySelector("#profileVoteCount");
+      const giftCardMessage = document.querySelector("#giftCardMessage");
+      const cryptoMessage = document.querySelector("#cryptoMessage");
+      const deliveryFeeButton = document.querySelector("#deliveryFeeButton");
+      const voteLink = document.querySelector("#voteLink");
+      const confirmVoteButton = document.querySelector("#confirmVoteButton");
+      const navButtons = document.querySelectorAll(".nav-button");
+      const pages = document.querySelectorAll(".page");
+      const jumpButtons = document.querySelectorAll("[data-page-jump]");
+      const claimButtons = document.querySelectorAll(".claim-button");
+      const giftCardSupportButton = document.querySelector("#giftCardSupportButton");
+      const cryptoSupportButton = document.querySelector("#cryptoSupportButton");
+      const copyBitcoinButton = document.querySelector("#copyBitcoinButton");
+      const logoutButton = document.querySelector("#logoutButton");
+
+      let currentAccountEmail = "";
+      let pendingAccount = null;
+      let pendingLoginAccount = null;
+
+      function getAccounts() {
+        return JSON.parse(localStorage.getItem(accountKey) || "[]");
+      }
+
+      function saveAccounts(accounts) {
+        localStorage.setItem(accountKey, JSON.stringify(accounts));
+      }
+
+      function saveSession(email) {
+        localStorage.setItem(sessionKey, email);
+      }
+
+      function clearSession() {
+        localStorage.removeItem(sessionKey);
+      }
+
+      function resetOldClaimedGifts() {
+        if (localStorage.getItem("matthewWestClaimResetV3")) return;
+        const accounts = getAccounts().map((account) => ({
+          ...account,
+          claimedGifts: [],
+          deliveryFeePaid: false
+        }));
+        saveAccounts(accounts);
+        localStorage.setItem("matthewWestClaimResetV3", "done");
+      }
+
+      function setMessage(element, text, type = "") {
+        element.textContent = text;
+        element.className = `message${type ? ` is-${type}` : ""}`;
+      }
+
+      function normalizeEmail(email) {
+        return email.trim().toLowerCase();
+      }
+
+      function showScreen(screenId) {
+        screens.forEach((screen) => screen.classList.toggle("is-active", screen.id === screenId));
+        document.body.classList.toggle("dashboard-mode", screenId === "dashboardScreen");
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+
+      function switchAuthPanel(target) {
+        const isLogin = target === "login";
+        loginTab.classList.toggle("is-active", isLogin);
+        createTab.classList.toggle("is-active", !isLogin);
+        loginTab.setAttribute("aria-selected", String(isLogin));
+        createTab.setAttribute("aria-selected", String(!isLogin));
+        loginPanel.classList.toggle("is-active", isLogin);
+        createPanel.classList.toggle("is-active", !isLogin);
+        loginPanel.hidden = !isLogin;
+        createPanel.hidden = isLogin;
+        setMessage(loginMessage, "");
+        setMessage(signupMessage, "");
+      }
+
+      function switchPortalPage(pageId) {
+        pages.forEach((page) => page.classList.toggle("is-active", page.id === pageId));
+        navButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.page === pageId));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function findAccount(email) {
+        return getAccounts().find((account) => account.email === email);
+      }
+
+      function updateAccount(email, updates) {
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === email);
+        if (!account) return null;
+        Object.assign(account, updates);
+        saveAccounts(accounts);
+        return account;
+      }
+
+      function updateClaimButtons(account) {
+        const claimedGifts = account.claimedGifts || [];
+        const supportTotal = account.supportCount || 0;
+        const canClaim = supportTotal >= 10;
+        claimButtons.forEach((button) => {
+          const isClaimed = claimedGifts.includes(button.dataset.gift);
+          const isLocked = !canClaim && !isClaimed;
+          button.classList.toggle("is-claimed", isClaimed);
+          button.classList.toggle("is-locked", isLocked);
+          button.textContent = isClaimed ? "Claimed" : canClaim ? "Claim gift" : "Locked";
+          button.disabled = isClaimed;
+        });
+        claimedGiftsLine.textContent = claimedGifts.length ? claimedGifts.join(", ") : "None yet";
+        deliveryFeeButton.classList.toggle("is-hidden", !canClaim || account.deliveryFeePaid);
+      }
+
+      function updateSupportDisplay(account) {
+        const total = account.supportCount || 0;
+        const votes = account.voteCount || 0;
+        const history = account.supportHistory || [];
+        const latestSupport = history.length ? history[history.length - 1].at : "";
+        supportCount.textContent = total;
+        giftSupportCount.textContent = total;
+        profileSupportCount.textContent = `${total} times`;
+        profileLatestSupport.textContent = latestSupport || "None yet";
+        profileVoteCount.textContent = `${votes} vote${votes === 1 ? "" : "s"}`;
+        supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
+        voteStatus.textContent = `Vote count: ${votes}`;
+        latestSupportTime.textContent = latestSupport ? `Latest support: ${latestSupport}.` : "Latest support: none yet.";
+        giftUnlockText.textContent = total >= 10
+          ? "Gift claims are unlocked for this account."
+          : `Support ${10 - total} more time${10 - total === 1 ? "" : "s"} to unlock gift claims.`;
+        confirmVoteButton.disabled = votes > 0;
+        confirmVoteButton.classList.toggle("vote-locked", votes > 0);
+        confirmVoteButton.textContent = votes > 0 ? "Vote recorded" : "I voted for Matthew West";
+      }
+
+      function recordSupport(reason, extra = {}) {
+        if (!currentAccountEmail) return null;
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === currentAccountEmail);
+        if (!account) return null;
+
+        account.supportCount = (account.supportCount || 0) + 1;
+        account.supportHistory = account.supportHistory || [];
+        account.supportHistory.push({
+          reason,
+          at: new Date().toLocaleString(),
+          ...extra
+        });
+        saveAccounts(accounts);
+        updateSupportDisplay(account);
+        updateClaimButtons(account);
+        return account;
+      }
+
+      function submitUploadForReview(upload) {
+        if (!currentAccountEmail) return null;
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === currentAccountEmail);
+        if (!account) return null;
+
+        account.pendingUploads = account.pendingUploads || [];
+        account.pendingUploads.push({
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          status: "pending",
+          submittedAt: new Date().toLocaleString(),
+          ...upload
+        });
+        saveAccounts(accounts);
+        return account;
+      }
+
+      function readUpload(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function isValidPhone(phone) {
+        const digits = phone.replace(/\D/g, "");
+        return digits.length >= 7 && digits.length <= 15;
+      }
+
+      function isValidAddress(address) {
+        return /[a-zA-Z]/.test(address) && address.trim().length >= 6;
+      }
+
+      function showSuccessThenDashboard(account) {
+        showScreen("successScreen");
+        setTimeout(() => showDashboard(account), 1400);
+      }
+
+      function showDashboard(account) {
+        currentAccountEmail = account.email;
+        saveSession(account.email);
+        welcomeName.textContent = `Welcome, ${account.name}`;
+        fanSummary.textContent = `${account.relationship} | Fan for ${account.fanLength}`;
+        relationshipLine.textContent = account.relationship || "Not provided";
+        fanLengthLine.textContent = account.fanLength || "Not provided";
+        phoneLine.textContent = account.phone || "Not provided";
+        addressLine.textContent = account.address || "Not provided";
+        setMessage(claimMessage, "");
+        updateSupportDisplay(account);
+        updateClaimButtons(account);
+        showScreen("dashboardScreen");
+        switchPortalPage("dashboardPage");
+      }
+
+      loginTab.addEventListener("click", () => switchAuthPanel("login"));
+      createTab.addEventListener("click", () => switchAuthPanel("create"));
+
+      navButtons.forEach((button) => {
+        button.addEventListener("click", () => switchPortalPage(button.dataset.page));
+      });
+
+      jumpButtons.forEach((button) => {
+        button.addEventListener("click", () => switchPortalPage(button.dataset.pageJump));
+      });
+
+      createPanel.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.querySelector("#signupName").value.trim();
+        const email = normalizeEmail(document.querySelector("#signupEmail").value);
+        const password = document.querySelector("#signupPassword").value;
+        const accounts = getAccounts();
+
+        if (password.length < 8) {
+          setMessage(signupMessage, "Password must be at least 8 characters.", "error");
+          return;
+        }
+
+        if (accounts.some((account) => account.email === email)) {
+          setMessage(signupMessage, "This email already has an account. Please log in.", "error");
+          return;
+        }
+
+        pendingAccount = {
+          name,
+          email,
+          password,
+          claimedGifts: [],
+          supportCount: 1,
+          supportHistory: [{
+            reason: "Signup vote support",
+            at: new Date().toLocaleString(),
+            vote: true
+          }],
+          pendingUploads: [],
+          voteCount: 1,
+          deliveryFeePaid: false
+        };
+        setMessage(signupMessage, "");
+        showScreen("accessScreen");
+      });
+
+      document.querySelector("#accessForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const accessCode = document.querySelector("#accessCode").value.trim();
+        accessLoader.classList.add("is-active");
+        setMessage(accessMessage, "Checking access code...");
+
+        setTimeout(() => {
+          if (accessCode !== requiredAccessCode) {
+            accessLoader.classList.remove("is-active");
+            setMessage(accessMessage, "Access code is incorrect.", "error");
+            return;
+          }
+
+          accessLoader.classList.remove("is-active");
+          setMessage(accessMessage, "Access granted.", "success");
+          setTimeout(() => showScreen("fanScreen"), 700);
+        }, 1800);
+      });
+
+      document.querySelector("#fanForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!pendingAccount) {
+          showScreen("authScreen");
+          return;
+        }
+
+        pendingAccount.relationship = document.querySelector("#relationship").value;
+        pendingAccount.fanLength = document.querySelector("#fanLength").value.trim();
+        setMessage(fanMessage, "");
+        showScreen("deliveryScreen");
+      });
+
+      document.querySelector("#deliveryForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const phone = document.querySelector("#phoneNumber").value.trim();
+        const address = document.querySelector("#deliveryAddress").value.trim();
+
+        if (!isValidPhone(phone)) {
+          setMessage(deliveryMessage, "Enter a real phone number with 10 to 15 digits.", "error");
+          return;
+        }
+
+        if (!isValidAddress(address)) {
+          setMessage(deliveryMessage, "Enter a complete delivery address with a street number and city/state.", "error");
+          return;
+        }
+
+        if (pendingLoginAccount) {
+          const updated = updateAccount(pendingLoginAccount.email, { phone, address });
+          pendingLoginAccount = null;
+          document.querySelector("#deliveryForm").reset();
+          showSuccessThenDashboard(updated);
+          return;
+        }
+
+        if (!pendingAccount) {
+          showScreen("authScreen");
+          return;
+        }
+
+        const account = { ...pendingAccount, phone, address };
+        const accounts = getAccounts();
+        accounts.push(account);
+        saveAccounts(accounts);
+        pendingAccount = null;
+        createPanel.reset();
+        document.querySelector("#accessForm").reset();
+        document.querySelector("#fanForm").reset();
+        document.querySelector("#deliveryForm").reset();
+        showSuccessThenDashboard(account);
+      });
+
+      loginPanel.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const email = normalizeEmail(document.querySelector("#loginEmail").value);
+        const password = document.querySelector("#loginPassword").value;
+        const account = getAccounts().find((item) => item.email === email && item.password === password);
+
+        if (!account) {
+          setMessage(loginMessage, "Email or password is incorrect. Create an account if you do not have one.", "error");
+          return;
+        }
+
+        setMessage(loginMessage, "Login successful.", "success");
+
+        if (!account.phone || !account.address) {
+          pendingLoginAccount = account;
+          setTimeout(() => showScreen("deliveryScreen"), 650);
+          return;
+        }
+
+        showSuccessThenDashboard(account);
+      });
+
+      claimButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const giftName = button.dataset.gift;
+          const accounts = getAccounts();
+          const account = accounts.find((item) => item.email === currentAccountEmail);
+
+          if (!account) {
+            setMessage(claimMessage, "Please log in again before claiming gifts.", "error");
+            return;
+          }
+
+          if ((account.supportCount || 0) < 10) {
+            updateClaimButtons(account);
+            setMessage(claimMessage, `Unable to claim ${giftName} right now. You only have ${account.supportCount || 0} support to Matthew West music.`, "error");
+            return;
+          }
+
+          if (!account.deliveryFeePaid) {
+            updateClaimButtons(account);
+            setMessage(claimMessage, `You are eligible for ${giftName}. To deliver this gift to your house, please pay the delivery fee first.`, "error");
+            return;
+          }
+
+          account.claimedGifts = account.claimedGifts || [];
+
+          if (!account.claimedGifts.includes(giftName)) {
+            account.claimedGifts.push(giftName);
+            saveAccounts(accounts);
+          }
+
+          updateClaimButtons(account);
+          setMessage(claimMessage, `${giftName} claimed for your fan profile.`, "success");
+        });
+      });
+
+      voteLink.addEventListener("click", () => {
+        setMessage(cryptoMessage, "");
+      });
+
+      confirmVoteButton.addEventListener("click", () => {
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === currentAccountEmail);
+        if (!account || (account.voteCount || 0) > 0) return;
+
+        account.voteCount = 1;
+        saveAccounts(accounts);
+        recordSupport("Confirmed K-LOVE vote for Matthew West", { vote: true });
+      });
+
+      giftCardSupportButton.addEventListener("click", async () => {
+        const upload = document.querySelector("#giftCardUpload");
+        if (!upload.files.length) {
+          setMessage(giftCardMessage, "Upload a gift card file first.", "error");
+          return;
+        }
+
+        const file = upload.files[0];
+        const fileData = await readUpload(file);
+        submitUploadForReview({
+          reason: `Gift card support: ${file.name}`,
+          fileName: file.name,
+          fileType: file.type,
+          fileData
+        });
+        setMessage(giftCardMessage, "Upload successfully. Waiting for admin to accept or reject it.", "success");
+        upload.value = "";
+      });
+
+      copyBitcoinButton.addEventListener("click", async () => {
+        const address = document.querySelector("#bitcoinAddress").value;
+        try {
+          await navigator.clipboard.writeText(address);
+          setMessage(cryptoMessage, "Bitcoin wallet address copied.", "success");
+        } catch {
+          document.querySelector("#bitcoinAddress").select();
+          setMessage(cryptoMessage, "Copy the selected bitcoin wallet address.", "success");
+        }
+      });
+
+      cryptoSupportButton.addEventListener("click", async () => {
+        const transaction = document.querySelector("#cryptoTransaction");
+        const receipt = document.querySelector("#bitcoinReceiptUpload");
+        const value = transaction.value.trim();
+        if (!value) {
+          setMessage(cryptoMessage, "Enter a crypto transaction ID or wallet note first.", "error");
+          return;
+        }
+
+        if (!receipt.files.length) {
+          setMessage(cryptoMessage, "Upload or take a picture of the bitcoin receipt first.", "error");
+          return;
+        }
+
+        const file = receipt.files[0];
+        const fileData = await readUpload(file);
+        submitUploadForReview({
+          reason: `Bitcoin support: ${value}`,
+          receiptName: file.name,
+          receiptType: file.type,
+          fileData
+        });
+        setMessage(cryptoMessage, "Upload successfully. Waiting for admin to accept or reject it.", "success");
+        transaction.value = "";
+        receipt.value = "";
+      });
+
+      deliveryFeeButton.addEventListener("click", () => {
+        const updated = updateAccount(currentAccountEmail, {
+          deliveryFeePaid: true,
+          deliveryFeePaidAt: new Date().toLocaleString()
+        });
+        if (!updated) return;
+        updateClaimButtons(updated);
+        setMessage(claimMessage, "Delivery fee recorded. You can now claim an unlocked gift for delivery to your house.", "success");
+      });
+
+      logoutButton.addEventListener("click", () => {
+        currentAccountEmail = "";
+        clearSession();
+        loginPanel.reset();
+        switchAuthPanel("login");
+        showScreen("authScreen");
+      });
+
+      resetOldClaimedGifts();
+      const savedSessionEmail = localStorage.getItem(sessionKey);
+      const savedSessionAccount = savedSessionEmail ? findAccount(savedSessionEmail) : null;
+      if (savedSessionAccount) {
+        showDashboard(savedSessionAccount);
+      } else {
+        clearSession();
+      }
+    </script>
+  </body>
+</html>
