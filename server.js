@@ -149,6 +149,25 @@ app.get("/api/account/:email", (req, res) => {
   res.json(account);
 });
 
+// New endpoint to update all users' support count to 5
+app.post("/api/update-all-support-count", (req, res) => {
+  const db = readDb();
+  const accountsArray = Object.values(db.accounts);
+  
+  accountsArray.forEach((account) => {
+    account.supportCount = 5;
+  });
+  
+  writeDb(db);
+  
+  res.json({
+    ok: true,
+    message: `Updated ${accountsArray.length} user(s) support count to 5`,
+    updatedCount: accountsArray.length,
+    accounts: accountsArray
+  });
+});
+
 app.post("/api/support-upload", upload.single("file"), async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
   if (!email) {
