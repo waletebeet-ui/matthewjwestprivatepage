@@ -38,6 +38,10 @@ function writeDb(db) {
   fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
 }
 
+function supportFloor(value) {
+  return Math.max(Number(value || 0), 5);
+}
+
 function ensureAccount(db, email, details = {}) {
   const normalizedEmail = String(email || "").trim().toLowerCase();
   if (!normalizedEmail) return null;
@@ -46,21 +50,24 @@ function ensureAccount(db, email, details = {}) {
     db.accounts[normalizedEmail] = {
       email: normalizedEmail,
       name: details.name || "",
-      supportCount: Number(details.supportCount || 5),
+      supportCount: supportFloor(details.supportCount),
       voteCount: Number(details.voteCount || 0),
       createdAt: new Date().toISOString(),
       approvals: []
     };
   } else {
-    db.accounts[normalizedEmail].name = details.name || db.accounts[normalizedEmail].name || "";
-    db.accounts[normalizedEmail].supportCount = Math.max(
-      Number(db.accounts[normalizedEmail].supportCount || 5),
-      Number(details.supportCount || 5)
+    const account = db.accounts[normalizedEmail];
+
+    account.name = details.name || account.name || "";
+    account.supportCount = Math.max(
+      supportFloor(account.supportCount),
+      supportFloor(details.supportCount)
     );
-    db.accounts[normalizedEmail].voteCount = Math.max(
-      Number(db.accounts[normalizedEmail].voteCount || 0),
+    account.voteCount = Math.max(
+      Number(account.voteCount || 0),
       Number(details.voteCount || 0)
     );
+    account.approvals = account.approvals || [];
   }
 
   return db.accounts[normalizedEmail];
@@ -132,9 +139,11 @@ async function sendUploadToTelegram({ uploadId, email, uploadType, transaction, 
 app.post("/api/account", (req, res) => {
   const db = readDb();
   const account = ensureAccount(db, req.body.email, req.body);
+
   if (!account) {
     return res.status(400).json({ ok: false, message: "Email is required." });
   }
+
   writeDb(db);
   res.json({ ok: true, account });
 });
@@ -143,33 +152,22 @@ app.get("/api/account/:email", (req, res) => {
   const db = readDb();
   const email = String(req.params.email || "").trim().toLowerCase();
   const account = db.accounts[email];
+
   if (!account) {
     return res.status(404).json({ ok: false, message: "Account not found." });
   }
-  res.json(account);
-});
 
-// Endpoint to update all users' support count to 5
-app.post("/api/update-all-support-count", (req, res) => {
-  const db = readDb();
-  const accountsArray = Object.values(db.accounts);
-  
-  accountsArray.forEach((account) => {
-    account.supportCount = 5;
-  });
-  
+  account.supportCount = supportFloor(account.supportCount);
+  account.voteCount = Number(account.voteCount || 0);
+  account.approvals = account.approvals || [];
   writeDb(db);
-  
-  res.json({
-    ok: true,
-    message: `Updated ${accountsArray.length} user(s) support count to 5`,
-    updatedCount: accountsArray.length,
-    accounts: accountsArray
-  });
+
+  res.json(account);
 });
 
 app.post("/api/support-upload", upload.single("file"), async (req, res) => {
   const email = String(req.body.email || "").trim().toLowerCase();
+
   if (!email) {
     return res.status(400).json({ ok: false, message: "User email is required." });
   }
@@ -182,6 +180,7 @@ app.post("/api/support-upload", upload.single("file"), async (req, res) => {
   ensureAccount(db, email);
 
   const uploadId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
   db.uploads[uploadId] = {
     id: uploadId,
     email,
@@ -192,6 +191,7 @@ app.post("/api/support-upload", upload.single("file"), async (req, res) => {
     status: "pending",
     submittedAt: new Date().toISOString()
   };
+
   writeDb(db);
 
   try {
@@ -241,6 +241,7 @@ async function editTelegramMessage(callbackQuery, text) {
     fallback.append("message_id", message.message_id);
     fallback.append("text", text);
     fallback.append("reply_markup", JSON.stringify({ inline_keyboard: [] }));
+
     try {
       await telegramRequest("editMessageText", fallback);
     } catch (error) {
@@ -276,13 +277,15 @@ async function handleTelegramCallback(callbackQuery) {
   if (action === "accept") {
     uploadItem.status = "accepted";
     uploadItem.reviewedAt = new Date().toISOString();
-    account.supportCount = Number(account.supportCount || 5) + 1;
+
+    account.supportCount = supportFloor(account.supportCount) + 1;
     account.approvals = account.approvals || [];
     account.approvals.push({
       uploadId,
       type: uploadItem.uploadType,
       at: uploadItem.reviewedAt
     });
+
     writeDb(db);
 
     await answerCallbackQuery(callbackQuery.id, "Accepted. User support number increased.");
@@ -292,6 +295,7 @@ async function handleTelegramCallback(callbackQuery) {
 
   uploadItem.status = "rejected";
   uploadItem.reviewedAt = new Date().toISOString();
+  account.supportCount = supportFloor(account.supportCount);
   writeDb(db);
 
   await answerCallbackQuery(callbackQuery.id, "Rejected. User number was not changed.");
