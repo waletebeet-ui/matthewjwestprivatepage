@@ -1366,7 +1366,8 @@
         const account = accounts.find((item) => item.email === currentAccountEmail);
         if (!account) return null;
 
-        account.supportCount = (account.supportCount || 5) + 1;
+        // Do NOT increment support count here - only log to history
+        // Support count is only incremented when backend approves uploads via Telegram
         account.supportHistory = account.supportHistory || [];
         account.supportHistory.push({
           reason,
