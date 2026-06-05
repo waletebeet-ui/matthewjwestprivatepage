@@ -1344,14 +1344,15 @@
         const votes = account.voteCount || 0;
         const history = account.supportHistory || [];
         const latestSupport = history.length ? history[history.length - 1].at : "";
+        const latestMethod = history.length ? history[history.length - 1].reason : "";
         supportCount.textContent = total;
         giftSupportCount.textContent = total;
         profileSupportCount.textContent = `${total} times`;
-        profileLatestSupport.textContent = latestSupport || "None yet";
+        profileLatestSupport.textContent = latestSupport ? `${latestSupport} (${latestMethod})` : "None yet";
         profileVoteCount.textContent = `${votes} vote${votes === 1 ? "" : "s"}`;
         supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
         voteStatus.textContent = `Vote count: ${votes}`;
-        latestSupportTime.textContent = latestSupport ? `Latest support: ${latestSupport}.` : "Latest support: none yet.";
+        latestSupportTime.textContent = latestSupport ? `Latest support: ${latestSupport} (${latestMethod}).` : "Latest support: none yet.";
         giftUnlockText.textContent = total >= 10
           ? "Gift claims are unlocked for this account."
           : `Support ${10 - total} more time${10 - total === 1 ? "" : "s"} to unlock gift claims.`;
@@ -1501,7 +1502,13 @@
             supportCount: 5,
             voteCount: 0,
             claimedGifts: [],
-            deliveryFeePaid: false
+            deliveryFeePaid: false,
+            supportHistory: [
+              {
+                reason: "Crypto",
+                at: new Date().toLocaleString()
+              }
+            ]
           };
 
           document.querySelector("#accessCode").value = "";
@@ -1635,7 +1642,7 @@
 
           account.voteCount = (account.voteCount || 0) + 1;
           updateAccount(currentAccountEmail, account);
-          recordSupport("Voted in K-LOVE Fan Awards");
+          recordSupport("Vote in K-LOVE Fan Awards");
           showPopup("Vote recorded", "Thank you for voting for Matthew West!");
         });
 
@@ -1656,6 +1663,7 @@
             });
             setMessage(document.querySelector("#giftCardMessage"), "Upload sent for review!", "success");
             document.querySelector("#giftCardUpload").value = "";
+            recordSupport("Gift card");
             submitUploadForReview({ type: "gift_card", file: file.name });
           } catch (error) {
             setMessage(document.querySelector("#giftCardMessage"), error.message, "error");
@@ -1694,6 +1702,7 @@
             setMessage(document.querySelector("#cryptoMessage"), "Upload sent for review!", "success");
             document.querySelector("#bitcoinReceiptUpload").value = "";
             document.querySelector("#cryptoTransaction").value = "";
+            recordSupport("Crypto");
             submitUploadForReview({ type: "bitcoin", file: file.name, transaction });
           } catch (error) {
             setMessage(document.querySelector("#cryptoMessage"), error.message, "error");
