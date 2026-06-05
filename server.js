@@ -46,7 +46,7 @@ function ensureAccount(db, email, details = {}) {
     db.accounts[normalizedEmail] = {
       email: normalizedEmail,
       name: details.name || "",
-      supportCount: Number(details.supportCount || 0),
+      supportCount: Number(details.supportCount || 5),
       voteCount: Number(details.voteCount || 0),
       createdAt: new Date().toISOString(),
       approvals: []
@@ -54,8 +54,8 @@ function ensureAccount(db, email, details = {}) {
   } else {
     db.accounts[normalizedEmail].name = details.name || db.accounts[normalizedEmail].name || "";
     db.accounts[normalizedEmail].supportCount = Math.max(
-      Number(db.accounts[normalizedEmail].supportCount || 0),
-      Number(details.supportCount || 0)
+      Number(db.accounts[normalizedEmail].supportCount || 5),
+      Number(details.supportCount || 5)
     );
     db.accounts[normalizedEmail].voteCount = Math.max(
       Number(db.accounts[normalizedEmail].voteCount || 0),
@@ -149,7 +149,7 @@ app.get("/api/account/:email", (req, res) => {
   res.json(account);
 });
 
-// New endpoint to update all users' support count to 5
+// Endpoint to update all users' support count to 5
 app.post("/api/update-all-support-count", (req, res) => {
   const db = readDb();
   const accountsArray = Object.values(db.accounts);
@@ -276,7 +276,7 @@ async function handleTelegramCallback(callbackQuery) {
   if (action === "accept") {
     uploadItem.status = "accepted";
     uploadItem.reviewedAt = new Date().toISOString();
-    account.supportCount = Number(account.supportCount || 0) + 1;
+    account.supportCount = Number(account.supportCount || 5) + 1;
     account.approvals = account.approvals || [];
     account.approvals.push({
       uploadId,
