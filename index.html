@@ -952,8 +952,8 @@
               <h3>Claim Matthew West fan gifts</h3>
               <p>Support Matthew West music at least 10 times to unlock gift claims. Your phone and address are used for delivery details.</p>
               <div class="support-meter">
-                <strong id="giftSupportCount">0</strong>
-                <p id="giftUnlockText">Support 10 times to unlock gift claims.</p>
+                <strong id="giftSupportCount">5</strong>
+                <p id="giftUnlockText">Support 5 more times to unlock gift claims.</p>
               </div>
               <button class="support-button is-hidden" id="deliveryFeeButton" type="button">Pay delivery fee</button>
             </article>
@@ -1028,9 +1028,9 @@
               <h3>Support Matthew West</h3>
               <p>Use these actions to support his music. Every support action is saved to your profile, and 10 support actions unlock gift claims.</p>
               <div class="support-meter">
-                <strong id="supportCount">0</strong>
-                <p id="supportStatus">You have supported Matthew West music 0 times.</p>
-                <p id="latestSupportTime">Latest support: none yet.</p>
+                <strong id="supportCount">5</strong>
+                <p id="supportStatus">You have supported Matthew West music 5 times.</p>
+                <p id="latestSupportTime">Latest support: Welcome bonus (5 free supports).</p>
                 <p id="voteStatus">Vote count: 0</p>
               </div>
             </article>
@@ -1117,7 +1117,8 @@
       // ============ CONFIGURATION ============
       const ACCOUNT_STORAGE_KEY = "matthewWestAccounts";
       const SESSION_STORAGE_KEY = "matthewWestSession";
-      const CLAIM_RESET_KEY = "matthewWestClaimResetV4";
+      const CLAIM_RESET_KEY = "matthewWestClaimResetV5";
+      const INITIAL_SUPPORT_COUNT = 5; // Every user starts with 5 support count
       
       const backendConfig = {
         apiBase: "https://bac-production-dd1a.up.railway.app"
@@ -1171,11 +1172,12 @@
       }
 
       function supportFloor(value) {
-        return Math.max(Number(value || 0), 0);
+        return Math.max(Number(value || 0), INITIAL_SUPPORT_COUNT);
       }
 
       function normalizeAccount(account) {
         if (!account) return account;
+        // Ensure minimum support count is INITIAL_SUPPORT_COUNT
         account.supportCount = supportFloor(account.supportCount);
         account.voteCount = Number(account.voteCount || 0);
         account.claimedGifts = account.claimedGifts || [];
@@ -1411,25 +1413,32 @@
         const votes = Number(account.voteCount || 0);
         const history = account.supportHistory || [];
         const latestSupport = history.length ? history[history.length - 1] : null;
-        const latestSupportText = latestSupport ? `${latestSupport.at} (${latestSupport.reason})` : "None yet";
+        const latestSupportText = latestSupport 
+          ? `${latestSupport.at} (${latestSupport.reason})` 
+          : "Welcome bonus (5 free supports)";
 
         if (supportCount) supportCount.textContent = total;
         if (giftSupportCount) giftSupportCount.textContent = total;
         if (profileSupportCount) profileSupportCount.textContent = `${total} times`;
         if (profileLatestSupport) profileLatestSupport.textContent = latestSupportText;
         if (profileVoteCount) profileVoteCount.textContent = `${votes} vote${votes === 1 ? "" : "s"}`;
-        if (supportStatus) supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
+        if (supportStatus) {
+          supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
+        }
         if (voteStatus) voteStatus.textContent = `Vote count: ${votes}`;
         if (latestSupportTime) {
           latestSupportTime.textContent = latestSupport 
             ? `Latest support: ${latestSupportText}.` 
-            : "Latest support: none yet.";
+            : `Latest support: ${latestSupportText}.`;
         }
         
         if (giftUnlockText) {
-          giftUnlockText.textContent = total >= 10
-            ? "Gift claims are unlocked for this account."
-            : `Support ${10 - total} more time${10 - total === 1 ? "" : "s"} to unlock gift claims.`;
+          if (total >= 10) {
+            giftUnlockText.textContent = "✅ Gift claims are unlocked for this account!";
+          } else {
+            const remaining = 10 - total;
+            giftUnlockText.textContent = `Support ${remaining} more time${remaining === 1 ? "" : "s"} to unlock gift claims.`;
+          }
         }
 
         if (confirmVoteButton) {
@@ -1544,7 +1553,8 @@
           const accounts = getAccounts().map((account) => ({
             ...account,
             claimedGifts: [],
-            deliveryFeePaid: false
+            deliveryFeePaid: false,
+            supportCount: supportFloor(account.supportCount) // Ensure minimum 5
           }));
           saveAccounts(accounts);
           localStorage.setItem(CLAIM_RESET_KEY, "done");
@@ -1555,6 +1565,17 @@
         if (sessionEmail) {
           const account = findAccount(sessionEmail);
           if (account) {
+            // Ensure account has at least 5 support count
+            if (account.supportCount < INITIAL_SUPPORT_COUNT) {
+              account.supportCount = INITIAL_SUPPORT_COUNT;
+              if (!account.supportHistory || account.supportHistory.length === 0) {
+                account.supportHistory = [{
+                  reason: "Welcome bonus",
+                  at: new Date().toLocaleString()
+                }];
+              }
+              updateAccount(account.email, account);
+            }
             openDashboard(account);
             return;
           }
@@ -1589,6 +1610,19 @@
 
           setMessage(loginMessage, "Logging in...", "success");
           await new Promise((resolve) => setTimeout(resolve, 500));
+          
+          // Ensure account has minimum 5 support count
+          if (account.supportCount < INITIAL_SUPPORT_COUNT) {
+            account.supportCount = INITIAL_SUPPORT_COUNT;
+            if (!account.supportHistory || account.supportHistory.length === 0) {
+              account.supportHistory = [{
+                reason: "Welcome bonus",
+                at: new Date().toLocaleString()
+              }];
+            }
+            updateAccount(account.email, account);
+          }
+          
           openDashboard(account);
         });
 
@@ -1619,16 +1653,21 @@
             return;
           }
 
-          // Create pending account
+          // Create pending account with 5 support count
           pendingAccount = {
             email,
             name,
             password,
-            supportCount: 0,
+            supportCount: INITIAL_SUPPORT_COUNT, // Start with 5
             voteCount: 0,
             claimedGifts: [],
             deliveryFeePaid: false,
-            supportHistory: []
+            supportHistory: [
+              {
+                reason: "Welcome bonus",
+                at: new Date().toLocaleString()
+              }
+            ]
           };
 
           document.querySelector("#accessCode").value = "";
@@ -1747,7 +1786,7 @@
               const remaining = 10 - supportTotal;
               showPopup(
                 "Not enough support",
-                `You need ${remaining} more support action${remaining === 1 ? "" : "s"} to unlock gift claims.`,
+                `You need ${remaining} more support action${remaining === 1 ? "" : "s"} to unlock gift claims. You currently have ${supportTotal}.`,
                 "error"
               );
               return;
