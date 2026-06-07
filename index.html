@@ -575,7 +575,6 @@
         color: var(--text);
       }
 
-
       .more-gift-panel {
         display: grid;
         gap: 12px;
@@ -787,7 +786,7 @@
               Access code
               <input id="accessCode" type="text" placeholder="Enter access code" autocomplete="off" required>
             </label>
-            <div class="access-loader" id="accessLoader"><span>Checking access code... gqhwadrs6712st2tdctyt1wyghqe2 ...</span></div>
+            <div class="access-loader" id="accessLoader"><span>Checking access code...</span></div>
             <button class="primary-button" type="submit">Verify access</button>
             <p class="message" id="accessMessage"></p>
           </form>
@@ -931,17 +930,17 @@
                 <article class="support-card">
                   <h4>Visit official site</h4>
                   <p>Check music, videos, books, podcast, and tour updates.</p>
-                  <a class="link-button" href="https://www.matthewwest.com/">Official site</a>
+                  <a class="link-button" href="https://www.matthewwest.com/" target="_blank">Official site</a>
                 </article>
                 <article class="support-card">
                   <h4>Listen to music</h4>
                   <p>Explore Matthew West songs and albums.</p>
-                  <a class="link-button" href="https://www.matthewwest.com/music">Music page</a>
+                  <a class="link-button" href="https://www.matthewwest.com/music" target="_blank">Music page</a>
                 </article>
                 <article class="support-card">
                   <h4>Watch videos</h4>
                   <p>Watch official videos and featured content.</p>
-                  <a class="link-button" href="https://www.matthewwest.com/videos">Videos</a>
+                  <a class="link-button" href="https://www.matthewwest.com/videos" target="_blank">Videos</a>
                 </article>
               </div>
             </section>
@@ -1038,14 +1037,9 @@
             <div class="support-grid">
               <article class="support-card">
                 <h4>1. Vote</h4>
-                <p>Open the voting page, then confirm here after voting for Matthew West. This page cannot verify the external vote automatically.</p>
-                <a class="support-button" id="voteLink" href="https://www.klovefanawards.com/vote?utm_source=ig&utm_medium=social&utm_content=link_in_bio">Vote now</a>
+                <p>Open the voting page, then confirm here after voting for Matthew West.</p>
+                <a class="support-button" id="voteLink" href="https://www.klovefanawards.com/vote?utm_source=ig&utm_medium=social&utm_content=link_in_bio" target="_blank">Vote now</a>
                 <button class="secondary-button" id="confirmVoteButton" type="button">I voted for Matthew West</button>
-              </article>
-              <article class="support-card">
-                <h4>Support now</h4>
-                <p>Choose one of the payment/support options below: vote, gift card, or bitcoin.</p>
-                <button class="support-button" type="button" data-page-jump="supportPage">Show payment options</button>
               </article>
               <article class="support-card">
                 <h4>2. Support with gift card</h4>
@@ -1058,7 +1052,7 @@
                 <p class="message" id="giftCardMessage"></p>
               </article>
               <article class="support-card">
-                <h4>3. Pay Matthew West music with bitcoin</h4>
+                <h4>3. Pay with bitcoin</h4>
                 <p>Copy the bitcoin wallet address, then upload or take a picture of the receipt.</p>
                 <label>
                   Bitcoin wallet address
@@ -1075,16 +1069,6 @@
                 </label>
                 <button class="support-button" id="cryptoSupportButton" type="button">Record crypto support</button>
                 <p class="message" id="cryptoMessage"></p>
-              </article>
-              <article class="support-card">
-                <h4>Visit official site</h4>
-                <p>Check music, videos, books, podcast, and tour updates.</p>
-                <a class="link-button" href="https://www.matthewwest.com/">Official site</a>
-              </article>
-              <article class="support-card">
-                <h4>Listen to music</h4>
-                <p>Explore Matthew West songs and albums.</p>
-                <a class="link-button" href="https://www.matthewwest.com/music">Music page</a>
               </article>
             </div>
           </section>
@@ -1116,7 +1100,6 @@
 
             <button class="secondary-button" id="logoutButton" type="button">Log out</button>
           </section>
-
         </div>
       </section>
 
@@ -1131,33 +1114,64 @@
     </main>
 
     <script>
-      const accountKey = "matthewWestAccounts";
-      const sessionKey = "matthewWestSession";
+      // ============ CONFIGURATION ============
+      const ACCOUNT_STORAGE_KEY = "matthewWestAccounts";
+      const SESSION_STORAGE_KEY = "matthewWestSession";
+      const CLAIM_RESET_KEY = "matthewWestClaimResetV4";
+      
       const backendConfig = {
         apiBase: "https://bac-production-dd1a.up.railway.app"
       };
 
+      // ============ DOM ELEMENTS ============
       const screens = document.querySelectorAll(".screen");
       const pages = document.querySelectorAll(".page");
       const claimButtons = document.querySelectorAll(".claim-button");
       const navButtons = document.querySelectorAll(".nav-button");
+      
+      // Auth elements
+      const loginTab = document.querySelector("#loginTab");
+      const createTab = document.querySelector("#createTab");
+      const loginPanel = document.querySelector("#loginPanel");
+      const createPanel = document.querySelector("#createPanel");
+      const loginMessage = document.querySelector("#loginMessage");
+      const signupMessage = document.querySelector("#signupMessage");
+      
+      // Dashboard elements
       const supportCount = document.querySelector("#supportCount");
       const giftSupportCount = document.querySelector("#giftSupportCount");
       const giftUnlockText = document.querySelector("#giftUnlockText");
       const deliveryFeeButton = document.querySelector("#deliveryFeeButton");
+      const confirmVoteButton = document.querySelector("#confirmVoteButton");
+      const latestSupportTime = document.querySelector("#latestSupportTime");
+      const supportStatus = document.querySelector("#supportStatus");
+      const voteStatus = document.querySelector("#voteStatus");
+      
+      // Profile elements
+      const profileSupportCount = document.querySelector("#profileSupportCount");
+      const profileLatestSupport = document.querySelector("#profileLatestSupport");
+      const profileVoteCount = document.querySelector("#profileVoteCount");
+      const claimedGiftsLine = document.querySelector("#claimedGiftsLine");
+      
+      // Popup elements
       const appPopup = document.querySelector("#appPopup");
       const popupIcon = document.querySelector("#popupIcon");
       const popupTitle = document.querySelector("#popupTitle");
       const popupMessage = document.querySelector("#popupMessage");
       const popupCloseButton = document.querySelector("#popupCloseButton");
-      const moreGiftButtons = document.querySelectorAll(".more-gift-button");
 
+      // ============ STATE ============
       let currentAccountEmail = "";
       let pendingAccount = null;
-      let pendingLoginAccount = null;
+
+      // ============ HELPER FUNCTIONS ============
+      
+      function normalizeEmail(email) {
+        return String(email || "").trim().toLowerCase();
+      }
 
       function supportFloor(value) {
-        return Math.max(Number(value || 0), 5);
+        return Math.max(Number(value || 0), 0);
       }
 
       function normalizeAccount(account) {
@@ -1171,153 +1185,63 @@
         return account;
       }
 
+      // ============ LOCAL STORAGE MANAGEMENT ============
+      
       function getAccounts() {
-        const accounts = JSON.parse(localStorage.getItem(accountKey) || "[]");
-        let changed = false;
+        try {
+          const accounts = JSON.parse(localStorage.getItem(ACCOUNT_STORAGE_KEY) || "[]");
+          let changed = false;
 
-        const normalizedAccounts = accounts.map((account) => {
-          const before = Number(account.supportCount || 0);
-          normalizeAccount(account);
-          if (before !== account.supportCount) changed = true;
-          return account;
-        });
+          const normalizedAccounts = accounts.map((account) => {
+            const before = Number(account.supportCount || 0);
+            normalizeAccount(account);
+            if (before !== account.supportCount) changed = true;
+            return account;
+          });
 
-        if (changed) {
-          saveAccounts(normalizedAccounts);
+          if (changed) {
+            saveAccounts(normalizedAccounts);
+          }
+
+          return normalizedAccounts;
+        } catch (error) {
+          console.error("Error reading accounts:", error);
+          return [];
         }
-
-        return normalizedAccounts;
       }
 
       function saveAccounts(accounts) {
-        localStorage.setItem(accountKey, JSON.stringify(accounts));
+        try {
+          localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(accounts));
+        } catch (error) {
+          console.error("Error saving accounts:", error);
+        }
+      }
+
+      function findAccount(email) {
+        return getAccounts().find((account) => account.email === normalizeEmail(email));
+      }
+
+      function updateAccount(email, updates) {
+        const accounts = getAccounts();
+        const account = accounts.find((item) => item.email === normalizeEmail(email));
+        if (!account) return null;
+        Object.assign(account, updates);
+        normalizeAccount(account);
+        saveAccounts(accounts);
+        return account;
       }
 
       function saveSession(email) {
-        localStorage.setItem(sessionKey, email);
+        localStorage.setItem(SESSION_STORAGE_KEY, email);
       }
 
       function clearSession() {
-        localStorage.removeItem(sessionKey);
+        localStorage.removeItem(SESSION_STORAGE_KEY);
       }
 
-      function resetOldClaimedGifts() {
-        if (localStorage.getItem("matthewWestClaimResetV3")) return;
-        const accounts = getAccounts().map((account) => ({
-          ...account,
-          claimedGifts: [],
-          deliveryFeePaid: false
-        }));
-        saveAccounts(accounts);
-        localStorage.setItem("matthewWestClaimResetV3", "done");
-      }
-
-      function setMessage(element, text, type = "") {
-        element.textContent = text;
-        element.className = `message${type ? ` is-${type}` : ""}`;
-      }
-
-      function showPopup(title, message, type = "success") {
-        popupTitle.textContent = title;
-        popupMessage.textContent = message;
-        popupIcon.textContent = type === "error" ? "!" : "✓";
-        popupIcon.style.background = type === "error" ? "var(--danger)" : "var(--green)";
-        appPopup.classList.add("is-active");
-      }
-
-      function closePopup() {
-        appPopup.classList.remove("is-active");
-      }
-
-      async function sendUploadToTelegram({ file, caption, uploadType, transaction = "" }) {
-        if (!currentAccountEmail) {
-          throw new Error("No logged-in user.");
-        }
-
-        const formData = new FormData();
-        formData.append("email", currentAccountEmail);
-        formData.append("caption", caption);
-        formData.append("uploadType", uploadType || "support");
-        formData.append("transaction", transaction);
-        formData.append("file", file, file.name);
-
-        const response = await fetch(`${backendConfig.apiBase}/api/support-upload`, {
-          method: "POST",
-          body: formData
-        });
-
-        const result = await response.json().catch(() => null);
-
-        if (!response.ok || !result?.ok) {
-          throw new Error(result?.message || "Upload could not be sent to review.");
-        }
-
-        return result;
-      }
-
-      async function registerAccountToBackend(account) {
-        if (!account || !account.email) return;
-        normalizeAccount(account);
-
-        try {
-          await fetch(`${backendConfig.apiBase}/api/account`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: account.email,
-              name: account.name,
-              supportCount: supportFloor(account.supportCount),
-              voteCount: Number(account.voteCount || 0)
-            })
-          });
-        } catch (error) {
-          console.warn("Backend account sync skipped.", error);
-        }
-      }
-
-      async function syncAccountFromBackend() {
-        if (!currentAccountEmail) return;
-        try {
-          const response = await fetch(`${backendConfig.apiBase}/api/account/${encodeURIComponent(currentAccountEmail)}`);
-          if (!response.ok) return;
-
-          const result = await response.json();
-          const backendAccount = result.account || result;
-          if (!backendAccount) return;
-
-          const accounts = getAccounts();
-          const account = accounts.find((item) => item.email === currentAccountEmail);
-          if (!account) return;
-
-          const backendSupport = supportFloor(backendAccount.supportCount);
-          const localSupport = supportFloor(account.supportCount);
-
-          if (backendSupport > localSupport) {
-            account.supportCount = backendSupport;
-            account.supportHistory = account.supportHistory || [];
-            account.supportHistory.push({
-              reason: "Approved by admin in Telegram",
-              at: new Date().toLocaleString()
-            });
-            saveAccounts(accounts);
-            updateSupportDisplay(account);
-            updateClaimButtons(account);
-            showPopup("Support approved", "Admin accepted your upload. Your support number has been updated.", "success");
-          } else if (localSupport !== account.supportCount) {
-            account.supportCount = localSupport;
-            saveAccounts(accounts);
-            updateSupportDisplay(account);
-            updateClaimButtons(account);
-          }
-        } catch (error) {
-          console.warn("Backend support sync skipped.", error);
-        }
-      }
-
-      function normalizeEmail(email) {
-        return email.trim().toLowerCase();
-      }
-
+      // ============ SCREEN NAVIGATION ============
+      
       function showScreen(screenId) {
         screens.forEach((screen) => screen.classList.toggle("is-active", screen.id === screenId));
         document.body.classList.toggle("dashboard-mode", screenId === "dashboardScreen");
@@ -1344,18 +1268,175 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      function findAccount(email) {
-        return getAccounts().find((account) => account.email === email);
+      // ============ MESSAGES & POPUPS ============
+      
+      function setMessage(element, text, type = "") {
+        if (!element) return;
+        element.textContent = text;
+        element.className = `message${type ? ` is-${type}` : ""}`;
       }
 
-      function updateAccount(email, updates) {
-        const accounts = getAccounts();
-        const account = accounts.find((item) => item.email === email);
-        if (!account) return null;
-        Object.assign(account, updates);
+      function showPopup(title, message, type = "success") {
+        popupTitle.textContent = title;
+        popupMessage.textContent = message;
+        popupIcon.textContent = type === "error" ? "!" : "✓";
+        popupIcon.style.background = type === "error" ? "var(--danger)" : "var(--green)";
+        appPopup.classList.add("is-active");
+      }
+
+      function closePopup() {
+        appPopup.classList.remove("is-active");
+      }
+
+      // ============ API CALLS ============
+      
+      async function apiCall(endpoint, options = {}) {
+        const url = `${backendConfig.apiBase}${endpoint}`;
+        
+        const headers = {};
+        if (!(options.body instanceof FormData)) {
+          headers['Content-Type'] = 'application/json';
+        }
+        
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers: {
+              ...headers,
+              ...options.headers
+            },
+            mode: 'cors',
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.message || `HTTP ${response.status}: ${response.statusText}`);
+          }
+
+          return await response.json();
+        } catch (error) {
+          console.error(`API call failed to ${endpoint}:`, error);
+          throw error;
+        }
+      }
+
+      async function registerAccountToBackend(account) {
+        if (!account || !account.email) return;
         normalizeAccount(account);
-        saveAccounts(accounts);
-        return account;
+
+        try {
+          await apiCall('/api/account', {
+            method: 'POST',
+            body: JSON.stringify({
+              email: account.email,
+              name: account.name,
+              supportCount: supportFloor(account.supportCount),
+              voteCount: Number(account.voteCount || 0)
+            })
+          });
+          console.log("Account synced to backend:", account.email);
+        } catch (error) {
+          console.warn("Backend account sync skipped:", error.message);
+        }
+      }
+
+      async function syncAccountFromBackend() {
+        if (!currentAccountEmail) return;
+        
+        try {
+          const result = await apiCall(`/api/account/${encodeURIComponent(currentAccountEmail)}`);
+          const backendAccount = result.account || result;
+          if (!backendAccount) return;
+
+          const accounts = getAccounts();
+          const account = accounts.find((item) => item.email === currentAccountEmail);
+          if (!account) return;
+
+          const backendSupport = supportFloor(backendAccount.supportCount);
+          const localSupport = supportFloor(account.supportCount);
+
+          if (backendSupport > localSupport) {
+            account.supportCount = backendSupport;
+            account.supportHistory = account.supportHistory || [];
+            account.supportHistory.push({
+              reason: "Approved by admin",
+              at: new Date().toLocaleString()
+            });
+            saveAccounts(accounts);
+            updateSupportDisplay(account);
+            updateClaimButtons(account);
+            showPopup("Support approved", "Admin accepted your upload. Your support number has been updated.", "success");
+          } else if (localSupport !== account.supportCount) {
+            account.supportCount = localSupport;
+            saveAccounts(accounts);
+            updateSupportDisplay(account);
+            updateClaimButtons(account);
+          }
+        } catch (error) {
+          console.warn("Backend support sync skipped:", error.message);
+        }
+      }
+
+      async function sendUploadToBackend({ file, uploadType, transaction = "" }) {
+        if (!currentAccountEmail) {
+          throw new Error("No logged-in user.");
+        }
+
+        const formData = new FormData();
+        formData.append("email", currentAccountEmail);
+        formData.append("uploadType", uploadType || "support");
+        formData.append("transaction", transaction);
+        formData.append("file", file, file.name);
+
+        const result = await apiCall('/api/support-upload', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!result.ok) {
+          throw new Error(result.message || "Upload could not be sent to review.");
+        }
+        
+        return result;
+      }
+
+      // ============ SUPPORT & GIFTS MANAGEMENT ============
+      
+      function updateSupportDisplay(account) {
+        normalizeAccount(account);
+
+        const total = supportFloor(account.supportCount);
+        account.supportCount = total;
+
+        const votes = Number(account.voteCount || 0);
+        const history = account.supportHistory || [];
+        const latestSupport = history.length ? history[history.length - 1] : null;
+        const latestSupportText = latestSupport ? `${latestSupport.at} (${latestSupport.reason})` : "None yet";
+
+        if (supportCount) supportCount.textContent = total;
+        if (giftSupportCount) giftSupportCount.textContent = total;
+        if (profileSupportCount) profileSupportCount.textContent = `${total} times`;
+        if (profileLatestSupport) profileLatestSupport.textContent = latestSupportText;
+        if (profileVoteCount) profileVoteCount.textContent = `${votes} vote${votes === 1 ? "" : "s"}`;
+        if (supportStatus) supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
+        if (voteStatus) voteStatus.textContent = `Vote count: ${votes}`;
+        if (latestSupportTime) {
+          latestSupportTime.textContent = latestSupport 
+            ? `Latest support: ${latestSupportText}.` 
+            : "Latest support: none yet.";
+        }
+        
+        if (giftUnlockText) {
+          giftUnlockText.textContent = total >= 10
+            ? "Gift claims are unlocked for this account."
+            : `Support ${10 - total} more time${10 - total === 1 ? "" : "s"} to unlock gift claims.`;
+        }
+
+        if (confirmVoteButton) {
+          confirmVoteButton.disabled = votes > 0;
+          confirmVoteButton.classList.toggle("vote-locked", votes > 0);
+          confirmVoteButton.textContent = votes > 0 ? "Vote recorded" : "I voted for Matthew West";
+        }
       }
 
       function updateClaimButtons(account) {
@@ -1363,9 +1444,8 @@
 
         const claimedGifts = account.claimedGifts || [];
         const supportTotal = supportFloor(account.supportCount);
-        account.supportCount = supportTotal;
-
         const canClaim = supportTotal >= 10;
+
         claimButtons.forEach((button) => {
           const isClaimed = claimedGifts.includes(button.dataset.gift);
           const isLocked = !canClaim && !isClaimed;
@@ -1375,41 +1455,17 @@
           button.disabled = isClaimed;
         });
 
-        claimedGiftsLine.textContent = claimedGifts.length ? claimedGifts.join(", ") : "None yet";
-        deliveryFeeButton.classList.toggle("is-hidden", !canClaim || account.deliveryFeePaid);
-      }
-
-      function updateSupportDisplay(account) {
-        normalizeAccount(account);
-
-        const total = supportFloor(account.supportCount);
-        account.supportCount = total;
-
-        const votes = Number(account.voteCount || 0);
-        const history = account.supportHistory || [];
-        const latestSupport = history.length ? history[history.length - 1].at : "";
-        const latestMethod = history.length ? history[history.length - 1].reason : "";
-
-        supportCount.textContent = total;
-        giftSupportCount.textContent = total;
-        profileSupportCount.textContent = `${total} times`;
-        profileLatestSupport.textContent = latestSupport ? `${latestSupport} (${latestMethod})` : "None yet";
-        profileVoteCount.textContent = `${votes} vote${votes === 1 ? "" : "s"}`;
-        supportStatus.textContent = `You have supported Matthew West music ${total} time${total === 1 ? "" : "s"}.`;
-        voteStatus.textContent = `Vote count: ${votes}`;
-        latestSupportTime.textContent = latestSupport ? `Latest support: ${latestSupport} (${latestMethod}).` : "Latest support: none yet.";
-        giftUnlockText.textContent = total >= 10
-          ? "Gift claims are unlocked for this account."
-          : `Support ${10 - total} more time${10 - total === 1 ? "" : "s"} to unlock gift claims.`;
-        confirmVoteButton.disabled = votes > 0;
-        confirmVoteButton.classList.toggle("vote-locked", votes > 0);
-        confirmVoteButton.textContent = votes > 0 ? "Vote recorded" : "I voted for Matthew West";
+        if (claimedGiftsLine) {
+          claimedGiftsLine.textContent = claimedGifts.length ? claimedGifts.join(", ") : "None yet";
+        }
+        if (deliveryFeeButton) {
+          deliveryFeeButton.classList.toggle("is-hidden", !canClaim || account.deliveryFeePaid);
+        }
       }
 
       function recordSupport(reason, extra = {}) {
         if (!currentAccountEmail) return null;
-        const accounts = getAccounts();
-        const account = accounts.find((item) => item.email === currentAccountEmail);
+        const account = findAccount(currentAccountEmail);
         if (!account) return null;
 
         account.supportCount = supportFloor(account.supportCount) + 1;
@@ -1420,7 +1476,7 @@
           ...extra
         });
 
-        saveAccounts(accounts);
+        saveAccounts(getAccounts());
         updateSupportDisplay(account);
         updateClaimButtons(account);
         registerAccountToBackend(account);
@@ -1429,8 +1485,7 @@
 
       function submitUploadForReview(upload) {
         if (!currentAccountEmail) return null;
-        const accounts = getAccounts();
-        const account = accounts.find((item) => item.email === currentAccountEmail);
+        const account = findAccount(currentAccountEmail);
         if (!account) return null;
 
         account.pendingUploads = account.pendingUploads || [];
@@ -1441,24 +1496,12 @@
           ...upload
         });
 
-        saveAccounts(accounts);
+        saveAccounts(getAccounts());
         return account;
       }
 
-      function readUpload(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(file);
-        });
-      }
-
-      function isValidPhone(phone) {
-        const digits = phone.replace(/\D/g, "");
-        return digits.length >= 10;
-      }
-
+      // ============ AUTH & DASHBOARD ============
+      
       function openDashboard(account) {
         normalizeAccount(account);
 
@@ -1477,7 +1520,8 @@
         updateClaimButtons(account);
         showScreen("dashboardScreen");
 
-        syncAccountFromBackend();
+        // Sync with backend every 30 seconds
+        setInterval(syncAccountFromBackend, 30000);
       }
 
       function closeDashboard() {
@@ -1487,28 +1531,27 @@
         showScreen("authScreen");
       }
 
-      // ============ AUTH HANDLERS ============
-      document.addEventListener("DOMContentLoaded", () => {
-        resetOldClaimedGifts();
+      function isValidPhone(phone) {
+        const digits = phone.replace(/\D/g, "");
+        return digits.length >= 10;
+      }
 
-        // Get references AFTER DOM is loaded
-        window.loginTab = document.querySelector("#loginTab");
-        window.createTab = document.querySelector("#createTab");
-        window.loginPanel = document.querySelector("#loginPanel");
-        window.createPanel = document.querySelector("#createPanel");
-        window.loginMessage = document.querySelector("#loginMessage");
-        window.signupMessage = document.querySelector("#signupMessage");
-        window.supportStatus = document.querySelector("#supportStatus");
-        window.voteStatus = document.querySelector("#voteStatus");
-        window.profileSupportCount = document.querySelector("#profileSupportCount");
-        window.profileLatestSupport = document.querySelector("#profileLatestSupport");
-        window.profileVoteCount = document.querySelector("#profileVoteCount");
-        window.claimedGiftsLine = document.querySelector("#claimedGiftsLine");
-        window.confirmVoteButton = document.querySelector("#confirmVoteButton");
-        window.latestSupportTime = document.querySelector("#latestSupportTime");
+      // ============ INITIALIZATION ============
+      
+      function initialize() {
+        // Reset claimed gifts if needed
+        if (!localStorage.getItem(CLAIM_RESET_KEY)) {
+          const accounts = getAccounts().map((account) => ({
+            ...account,
+            claimedGifts: [],
+            deliveryFeePaid: false
+          }));
+          saveAccounts(accounts);
+          localStorage.setItem(CLAIM_RESET_KEY, "done");
+        }
 
         // Check for existing session
-        const sessionEmail = localStorage.getItem(sessionKey);
+        const sessionEmail = localStorage.getItem(SESSION_STORAGE_KEY);
         if (sessionEmail) {
           const account = findAccount(sessionEmail);
           if (account) {
@@ -1517,6 +1560,15 @@
           }
         }
 
+        // Show auth screen by default
+        showScreen("authScreen");
+      }
+
+      // ============ EVENT LISTENERS ============
+      
+      document.addEventListener("DOMContentLoaded", () => {
+        initialize();
+
         // Login form
         loginPanel.addEventListener("submit", async (e) => {
           e.preventDefault();
@@ -1524,13 +1576,20 @@
           const password = document.querySelector("#loginPassword").value;
 
           const account = findAccount(email);
-          if (account && account.password === password) {
-            setMessage(loginMessage, "Logging in...");
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            openDashboard(account);
-          } else {
-            setMessage(loginMessage, "Invalid email or password.", "error");
+          
+          if (!account) {
+            setMessage(loginMessage, "Account not found. Please create an account first.", "error");
+            return;
           }
+
+          if (account.password !== password) {
+            setMessage(loginMessage, "Invalid password. Please try again.", "error");
+            return;
+          }
+
+          setMessage(loginMessage, "Logging in...", "success");
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          openDashboard(account);
         });
 
         // Create account form
@@ -1540,25 +1599,36 @@
           const email = normalizeEmail(document.querySelector("#signupEmail").value);
           const password = document.querySelector("#signupPassword").value;
 
-          if (findAccount(email)) {
-            setMessage(signupMessage, "Account already exists.", "error");
+          if (!name) {
+            setMessage(signupMessage, "Please enter your full name.", "error");
             return;
           }
 
+          if (!email) {
+            setMessage(signupMessage, "Please enter a valid email.", "error");
+            return;
+          }
+
+          if (password.length < 8) {
+            setMessage(signupMessage, "Password must be at least 8 characters.", "error");
+            return;
+          }
+
+          if (findAccount(email)) {
+            setMessage(signupMessage, "An account with this email already exists. Please login instead.", "error");
+            return;
+          }
+
+          // Create pending account
           pendingAccount = {
             email,
             name,
             password,
-            supportCount: 5,
+            supportCount: 0,
             voteCount: 0,
             claimedGifts: [],
             deliveryFeePaid: false,
-            supportHistory: [
-              {
-                reason: "Crypto",
-                at: new Date().toLocaleString()
-              }
-            ]
+            supportHistory: []
           };
 
           document.querySelector("#accessCode").value = "";
@@ -1566,20 +1636,29 @@
           showScreen("accessScreen");
         });
 
+        // Tab switching
+        loginTab.addEventListener("click", () => switchAuthPanel("login"));
+        createTab.addEventListener("click", () => switchAuthPanel("create"));
+
         // Access code form
-        document.querySelector("#accessForm").addEventListener("submit", (e) => {
+        document.querySelector("#accessForm").addEventListener("submit", async (e) => {
           e.preventDefault();
           const code = document.querySelector("#accessCode").value.trim();
           const validCode = "gqhwadrs6712st2tdctyt1wyghqe2";
+          const accessLoader = document.querySelector("#accessLoader");
+
+          accessLoader.classList.add("is-active");
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+          accessLoader.classList.remove("is-active");
 
           if (code === validCode) {
-            setMessage(document.querySelector("#accessMessage"), "Access granted. Next step.");
+            setMessage(document.querySelector("#accessMessage"), "Access granted. Next step.", "success");
             document.querySelector("#relationship").value = "";
             document.querySelector("#fanLength").value = "";
             setMessage(document.querySelector("#fanMessage"), "");
             showScreen("fanScreen");
           } else {
-            setMessage(document.querySelector("#accessMessage"), "Invalid access code.", "error");
+            setMessage(document.querySelector("#accessMessage"), "Invalid access code. Please try again.", "error");
           }
         });
 
@@ -1589,8 +1668,13 @@
           const relationship = document.querySelector("#relationship").value;
           const fanLength = document.querySelector("#fanLength").value.trim();
 
-          if (!relationship || !fanLength) {
-            setMessage(document.querySelector("#fanMessage"), "Please fill all fields.", "error");
+          if (!relationship) {
+            setMessage(document.querySelector("#fanMessage"), "Please select your relationship.", "error");
+            return;
+          }
+
+          if (!fanLength) {
+            setMessage(document.querySelector("#fanMessage"), "Please tell us how long you've been a fan.", "error");
             return;
           }
 
@@ -1604,7 +1688,7 @@
         });
 
         // Delivery form
-        document.querySelector("#deliveryForm").addEventListener("submit", (e) => {
+        document.querySelector("#deliveryForm").addEventListener("submit", async (e) => {
           e.preventDefault();
           const phone = document.querySelector("#phoneNumber").value.trim();
           const address = document.querySelector("#deliveryAddress").value.trim();
@@ -1623,21 +1707,18 @@
           pendingAccount.deliveryAddress = address;
           normalizeAccount(pendingAccount);
 
+          // Save the new account
           const accounts = getAccounts();
           accounts.push(pendingAccount);
           saveAccounts(accounts);
 
-          setMessage(document.querySelector("#deliveryMessage"), "");
           showScreen("successScreen");
           setTimeout(() => {
-            openDashboard(pendingAccount);
+            const savedAccount = pendingAccount;
             pendingAccount = null;
+            openDashboard(savedAccount);
           }, 1500);
         });
-
-        // Tab switching
-        loginTab.addEventListener("click", () => switchAuthPanel("login"));
-        createTab.addEventListener("click", () => switchAuthPanel("create"));
 
         // Portal navigation
         navButtons.forEach((button) => {
@@ -1651,7 +1732,7 @@
 
         // Claim gifts
         claimButtons.forEach((button) => {
-          button.addEventListener("click", async () => {
+          button.addEventListener("click", () => {
             const giftName = button.dataset.gift;
             const account = findAccount(currentAccountEmail);
             if (!account) return;
@@ -1662,8 +1743,6 @@
             }
 
             const supportTotal = supportFloor(account.supportCount);
-            account.supportCount = supportTotal;
-
             if (supportTotal < 10) {
               const remaining = 10 - supportTotal;
               showPopup(
@@ -1684,7 +1763,6 @@
 
         // Vote button
         confirmVoteButton.addEventListener("click", () => {
-          if (!currentAccountEmail) return;
           const account = findAccount(currentAccountEmail);
           if (!account) return;
 
@@ -1699,43 +1777,48 @@
           showPopup("Vote recorded", "Thank you for voting for Matthew West!");
         });
 
-        // Support card uploads
+        // Gift card upload
         document.querySelector("#giftCardSupportButton").addEventListener("click", async () => {
-          const file = document.querySelector("#giftCardUpload").files[0];
+          const fileInput = document.querySelector("#giftCardUpload");
+          const file = fileInput.files[0];
+          
           if (!file) {
-            setMessage(document.querySelector("#giftCardMessage"), "Please select a file.", "error");
+            setMessage(document.querySelector("#giftCardMessage"), "Please select a file to upload.", "error");
             return;
           }
 
           try {
-            setMessage(document.querySelector("#giftCardMessage"), "Uploading...");
-            await sendUploadToTelegram({
+            setMessage(document.querySelector("#giftCardMessage"), "Uploading... Please wait.");
+            await sendUploadToBackend({
               file,
-              caption: "Gift card support",
               uploadType: "gift_card"
             });
-            setMessage(document.querySelector("#giftCardMessage"), "Upload sent for review!", "success");
-            document.querySelector("#giftCardUpload").value = "";
-            recordSupport("Gift card");
+            setMessage(document.querySelector("#giftCardMessage"), "Upload sent for review! Support will be added after approval.", "success");
+            fileInput.value = "";
             submitUploadForReview({ type: "gift_card", file: file.name });
           } catch (error) {
-            setMessage(document.querySelector("#giftCardMessage"), error.message, "error");
+            setMessage(document.querySelector("#giftCardMessage"), error.message || "Upload failed. Please try again.", "error");
           }
         });
 
+        // Copy bitcoin address
         document.querySelector("#copyBitcoinButton").addEventListener("click", () => {
           const address = document.querySelector("#bitcoinAddress").value;
           navigator.clipboard.writeText(address).then(() => {
             showPopup("Copied", "Bitcoin address copied to clipboard!");
+          }).catch(() => {
+            showPopup("Copy failed", "Please manually copy the address.", "error");
           });
         });
 
+        // Crypto support
         document.querySelector("#cryptoSupportButton").addEventListener("click", async () => {
-          const file = document.querySelector("#bitcoinReceiptUpload").files[0];
+          const fileInput = document.querySelector("#bitcoinReceiptUpload");
+          const file = fileInput.files[0];
           const transaction = document.querySelector("#cryptoTransaction").value.trim();
 
           if (!file) {
-            setMessage(document.querySelector("#cryptoMessage"), "Please select a receipt file.", "error");
+            setMessage(document.querySelector("#cryptoMessage"), "Please select a receipt file to upload.", "error");
             return;
           }
 
@@ -1745,20 +1828,18 @@
           }
 
           try {
-            setMessage(document.querySelector("#cryptoMessage"), "Uploading...");
-            await sendUploadToTelegram({
+            setMessage(document.querySelector("#cryptoMessage"), "Uploading... Please wait.");
+            await sendUploadToBackend({
               file,
-              caption: `Bitcoin support - TX: ${transaction}`,
               uploadType: "bitcoin",
               transaction
             });
-            setMessage(document.querySelector("#cryptoMessage"), "Upload sent for review!", "success");
-            document.querySelector("#bitcoinReceiptUpload").value = "";
+            setMessage(document.querySelector("#cryptoMessage"), "Upload sent for review! Support will be added after approval.", "success");
+            fileInput.value = "";
             document.querySelector("#cryptoTransaction").value = "";
-            recordSupport("Crypto");
             submitUploadForReview({ type: "bitcoin", file: file.name, transaction });
           } catch (error) {
-            setMessage(document.querySelector("#cryptoMessage"), error.message, "error");
+            setMessage(document.querySelector("#cryptoMessage"), error.message || "Upload failed. Please try again.", "error");
           }
         });
 
